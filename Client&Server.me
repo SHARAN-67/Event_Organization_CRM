@@ -1,0 +1,81 @@
+# 🌐 Client & Server: Technical Blueprint
+
+This document provides a detailed breakdown of the internal file structure, routing logic, and the specific role of every `.js` and `.jsx` file within the Command Center ecosystem.
+
+---
+
+## 🖥️ 1. Server-Side (The Backend Hub)
+**Directory:** `/server`
+The server acts as the central nervous system, handling data persistence, security gating, and business logic.
+
+### 🔌 Main Entry (`index.js`)
+- **`index.js`**: Initializes the Express application, establishes the MongoDB connection via Mongoose, configures cross-origin resource sharing (CORS), and registers all module-specific API routes.
+
+### 🛡️ Middleware (`/middleware`)
+- **`authMiddleware.js`**: Intercepts mission-critical requests to verify JWT (JSON Web Tokens) and extract user identity.
+- **`rbacMiddleware.js`**: Enforces Role-Based Access Control by comparing the authenticated user's role against the required permissions for a specific route.
+
+### 🗺️ API Routes (`/routes`)
+Each file defines RESTful endpoints for a specific functional block:
+- **`authRoutes.js`**: Handles login, registration, and management of the Security Matrix/RBAC rules.
+- **`reportRoutes.js`**: Manages the lifecycle of operational reports and secured dossier file transfers.
+- **`leadRoutes.js`**: Implements the approval/deny workflow for incoming inquiries.
+- **`eventRoutes.js` & `analyticsRoutes.js`**: Provide data streams for visualization charts.
+- **`contactRoutes.js`**, **`taskRoutes.js`**, **`orderRoutes.js`**, **`productRoutes.js`**: Standard CRUD operations for core business objects.
+- **`secretRoutes.js`**: A hidden route for manual high-level event overrides (requires secret header).
+
+### 🏛️ Data Models (`/models`)
+- **`User.js`**, **`Report.js`**, **`Lead.js`**, **`Contact.js`**, **`EventAnalytics.js`**: Define the Mongoose schemas, data types, and required fields for MongoDB.
+
+---
+
+## 💻 2. Client-Side (The Visual Terminal)
+**Directory:** `/client/src`
+The client is a React-powered SPA (Single Page Application) that provides the user interface.
+
+### 🚀 Core Orchestration
+- **`main.jsx`**: The application entry point that mounts the React DOM and initializes the root.
+- **`App.jsx`**: The primary router. It maps URL paths to specific page components and wraps them in Auth/Theme providers.
+
+### 🧠 Strategic Context (`/context`)
+- **`AuthContext.jsx`**: Global state for user authentication, login/logout logic, and session persistence.
+- **`AccessControlContext.jsx`**: Manages granular UI permissions, determining which buttons or fields a user can see (e.g., masking data for Assistants).
+
+### 🏗️ Layouts & Navigation (`/layouts`, `/navigation`)
+- **`dashboard.jsx`**: The master layout wrapper that includes the persistent sidebar and top-level header.
+- **`Sidebar.jsx`**: The dynamic navigation engine that conditionally renders menu items based on the user's role and permissions.
+
+### 📄 Feature Pages (`/pages`)
+- **`Home.jsx`**: Command dashboard with hero sections and protocol indicators.
+- **`Reports.jsx`**: The intelligence archive interface with real-time file upload/CRUD.
+- **`Analytics.jsx`**: Visual data processing unit using charts and graphs.
+- **`MyRequests.jsx`**: Dedicated workspace for low-clearance tasks (Assistant role).
+- **Sub-folders (`/sales`, `/inventory`, `/activities`)**: House modular page components like `Leads.jsx`, `Products.jsx`, and `Meetings.jsx`.
+
+### 🛠️ Pipeline Components Cluster (`/components/pipeline`)
+Located within the `/sales` visual workflow engine:
+- **`KanbanBoard.jsx`**: The orchestrator of the visual pipeline. Manages the four core stages (Prospecting, Processing, Live, Completed) and handles the **Drag & Drop API** logic.
+- **`KanbanCard.jsx`**: The intelligence unit representing individual records. Displays venue, attendees, budget, and timing with hover-activated micro-interactions.
+- **`KanbanColumn.jsx`**: The structural infrastructure for each stage. Manages drop-zone logic and column metadata.
+- **`EventFormDialog.jsx`**: A modular modal interface for data intake and real-time backend synchronization.
+
+
+### 🛠️ Utilities & Plugins (`/hooks`, `/theme`, `/lib`)
+- **`hooks/`**: Custom logic like `useAccessRules.js` for interacting with the security API.
+- **`theme/`**: `ThemeContext.jsx` manages the global aesthetic (Light/Dark/Night).
+- **`lib/`**: Contains UI utilities and Shadcn configuration for consistent component styling.
+
+---
+
+## ⚖️ 3. Client-Server Synchronization
+Data flows between these two environments via **Axios** (on the client) and **Express** (on the server).
+
+1.  **Request**: Client (e.g., `Reports.jsx`) sends an HTTP request with a JWT token.
+2.  **Intercept**: Server Middleware (`authMiddleware.js`) validates the token.
+3.  **Process**: Route Handler (`reportRoutes.js`) executes business logic and interacts with the DB.
+4.  **Response**: Server sends JSON back. Client updates React state (`useState`), and the UI re-renders instantly.
+
+---
+**File Reference:** Client&Server.me  
+**Project:** Command Center Platform  
+**Architecture:** MERN (MongoDB, Express, React, Node)

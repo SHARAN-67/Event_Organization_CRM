@@ -1,0 +1,50 @@
+export const PERMISSIONS = {
+    LEADS: {
+        VIEW: 'leads:view',
+        MANAGE: 'leads:manage', // Create, Update
+        FULFILL: 'leads:fulfill', // Process, Complete
+        ROOT: 'leads:root'      // Delete, Export
+    },
+    CONTACTS: {
+        VIEW: 'contacts:view',
+        MANAGE: 'contacts:manage',
+        ROOT: 'contacts:root'
+    },
+    TASKS: {
+        VIEW: 'tasks:view',
+        MANAGE: 'tasks:manage',
+        ROOT: 'tasks:root'
+    },
+    PRODUCTS: {
+        VIEW: 'products:view',
+        MANAGE: 'products:manage',
+        ROOT: 'products:root'
+    }
+};
+
+export const POLICY = {
+    'Admin': [
+        PERMISSIONS.LEADS.VIEW, PERMISSIONS.LEADS.MANAGE, PERMISSIONS.LEADS.ROOT, PERMISSIONS.LEADS.FULFILL,
+        PERMISSIONS.CONTACTS.VIEW, PERMISSIONS.CONTACTS.MANAGE, PERMISSIONS.CONTACTS.ROOT,
+        PERMISSIONS.TASKS.VIEW, PERMISSIONS.TASKS.MANAGE, PERMISSIONS.TASKS.ROOT,
+        PERMISSIONS.PRODUCTS.VIEW, PERMISSIONS.PRODUCTS.MANAGE, PERMISSIONS.PRODUCTS.ROOT
+    ],
+    'Lead Planner': [
+        PERMISSIONS.LEADS.VIEW, PERMISSIONS.LEADS.MANAGE, PERMISSIONS.LEADS.FULFILL,
+        PERMISSIONS.CONTACTS.VIEW, PERMISSIONS.CONTACTS.MANAGE,
+        PERMISSIONS.TASKS.VIEW, PERMISSIONS.TASKS.MANAGE, PERMISSIONS.TASKS.ROOT, // Can delete their own tasks/manage fully
+        PERMISSIONS.PRODUCTS.VIEW, PERMISSIONS.PRODUCTS.MANAGE
+    ],
+    'Planner': [
+        PERMISSIONS.LEADS.VIEW, PERMISSIONS.LEADS.MANAGE, PERMISSIONS.LEADS.FULFILL,
+        PERMISSIONS.CONTACTS.VIEW, PERMISSIONS.CONTACTS.MANAGE,
+        PERMISSIONS.TASKS.VIEW, PERMISSIONS.TASKS.MANAGE, PERMISSIONS.TASKS.ROOT,
+        PERMISSIONS.PRODUCTS.VIEW, PERMISSIONS.PRODUCTS.MANAGE
+    ],
+    'Assistant': [
+        PERMISSIONS.LEADS.VIEW, PERMISSIONS.LEADS.FULFILL,
+        PERMISSIONS.CONTACTS.VIEW,
+        PERMISSIONS.TASKS.VIEW,
+        PERMISSIONS.PRODUCTS.VIEW
+    ]
+};
