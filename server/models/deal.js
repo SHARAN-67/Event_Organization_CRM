@@ -27,6 +27,20 @@ const dealSchema = new mongoose.Schema({
     venue: {
         type: String,
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    changeLog: [{
+        timestamp: { type: Date, default: Date.now },
+        modifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        changes: [{
+            field: String,
+            oldValue: mongoose.Schema.Types.Mixed,
+            newValue: mongoose.Schema.Types.Mixed
+        }]
+    }],
     createdAt: {
         type: Date,
         default: Date.now,

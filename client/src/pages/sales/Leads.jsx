@@ -244,7 +244,7 @@ const Leads = () => {
                                                             >
                                                                 {assistants.map(a => (
                                                                     <option key={a._id} value={a._id}>
-                                                                        {a.name} ({a.role})
+                                                                        {a.agId ? `[${a.agId}] ` : ''}{a.name}
                                                                     </option>
                                                                 ))}
                                                             </select>
@@ -319,6 +319,7 @@ const Leads = () => {
                 initialData={selectedLead}
                 onSubmit={handleFormSubmit}
                 readOnly={isReadOnly}
+                assistants={assistants}
             />
         </div>
     );

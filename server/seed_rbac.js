@@ -3,12 +3,35 @@ const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 require('dotenv').config();
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/admin_db';
-
 const seedUsers = async () => {
     try {
-        await mongoose.connect(MONGO_URI);
-        console.log('Connected to MongoDB');
+        let connected = false;
+
+        // Try Cloud Connection first
+        if (process.env.MONGO_URI_CLOUD) {
+            try {
+                await mongoose.connect(process.env.MONGO_URI_CLOUD);
+                console.log('☁️  Connected to MongoDB Cloud for Seeding');
+                connected = true;
+            } catch (e) {
+                console.log('❌ Cloud connection failed:', e.message);
+            }
+        }
+
+        // Fallback to Local
+        if (!connected && process.env.MONGO_URI_LOCAL) {
+            try {
+                await mongoose.connect(process.env.MONGO_URI_LOCAL);
+                console.log('🏠 Connected to MongoDB Local for Seeding');
+                connected = true;
+            } catch (e) {
+                console.log('❌ Local connection failed:', e.message);
+            }
+        }
+
+        if (!connected) {
+            throw new Error("Could not connect to any database.");
+        }
 
         // Clear ALL users to avoid duplicates/conflicts for testing
         await User.deleteMany({});
@@ -22,7 +45,8 @@ const seedUsers = async () => {
                 email: 'admin@cnevents.com',
                 password: 'password123',
                 role: 'Admin',
-                jobTitle: 'System Administrator'
+                jobTitle: 'System Administrator',
+                isOnline: false
             },
             {
                 agId: 'AG-0002',
@@ -30,7 +54,8 @@ const seedUsers = async () => {
                 email: 'peter@cnevents.com',
                 password: 'peter@123',
                 role: 'Assistant',
-                jobTitle: 'Sales Assistant'
+                jobTitle: 'Sales Assistant',
+                isOnline: false
             },
             {
                 agId: 'AG-0003',
@@ -38,7 +63,8 @@ const seedUsers = async () => {
                 email: 'jhon@cnevents.com', // Keeping 'jhon' as typed by user
                 password: 'jhon@123',
                 role: 'Lead Planner',
-                jobTitle: 'Senior Planner'
+                jobTitle: 'Senior Planner',
+                isOnline: false
             }
         ];
 
@@ -52,7 +78,7 @@ const seedUsers = async () => {
             }
         }
 
-        console.log('RBAC Seed Complete');
+        console.log('✅ RBAC Seed Complete');
         process.exit(0);
     } catch (error) {
         console.error('Seed Error:', error);

@@ -97,7 +97,7 @@ const AnalyticsDashboard = () => {
                 heightLeft -= pageHeight;
             }
 
-            pdf.save('Antigravity_Intelligence_Report.pdf');
+            pdf.save('Operational_Intelligence_Report.pdf');
         } catch (err) {
             console.error('PDF Export Issue:', err);
             alert('Export failed. Check console.');
@@ -297,11 +297,26 @@ const AnalyticsDashboard = () => {
                 {/* Third Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="border p-8 rounded-[2.5rem] shadow-sm transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                        <h3 className="text-sm font-black mb-8 flex items-center gap-3 uppercase tracking-widest">
-                            <Users className="w-5 h-5 text-purple-500" />
-                            Distribution
-                        </h3>
-                        <div className="h-64 w-full">
+                        <div className="flex items-start justify-between mb-6">
+                            <h3 className="text-sm font-black flex items-center gap-3 uppercase tracking-widest">
+                                <Users className="w-5 h-5 text-purple-500" />
+                                Distribution
+                            </h3>
+                            <div className="flex flex-col gap-2">
+                                {leadSourceDist.value.map((entry, index) => (
+                                    <div key={`legend-${index}`} className="flex items-center gap-2">
+                                        <div
+                                            className="w-3 h-3 rounded-sm flex-shrink-0"
+                                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                                        />
+                                        <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: textColor }}>
+                                            {entry.name}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="h-56 w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie

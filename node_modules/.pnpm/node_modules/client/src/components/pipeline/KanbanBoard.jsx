@@ -1,28 +1,52 @@
 import React, { useState } from 'react';
 import { MoreHorizontal, Trash2, Edit, MapPin, Users, Calendar, IndianRupee } from 'lucide-react';
+import './KanbanBoard.css';
 
-const STAGES = ['Prospecting', 'Processing', 'Live', 'Completed'];
+const DEFAULT_STAGES = ['Prospecting', 'Processing', 'Live', 'Completed'];
 
-const KanbanBoard = ({ events, updateEventStage, deleteEvent, onEditEvent, canWrite = true, canDelete = true }) => {
+export const KanbanBoard = ({
+    events,
+    updateEventStage,
+    deleteEvent,
+    onEditEvent,
+    canWrite = true,
+    canDelete = true
+}) => {
     const [activeMenu, setActiveMenu] = useState(null);
+    const [dragOverStage, setDragOverStage] = useState(null);
 
-    const onDragStart = (e, id) => {
+    // Dynamic stages: Defaults + any other stage found in events
+    const allStages = [...new Set([...DEFAULT_STAGES, ...events.map(e => e.stage)])];
+
+    const handleDragStart = (e, id) => {
         if (!canWrite) {
             e.preventDefault();
             return;
         }
         e.dataTransfer.setData('eventId', id);
+        e.dataTransfer.effectAllowed = 'move';
     };
 
-    const onDragOver = (e) => {
+    const handleDragOver = (e) => {
         e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
     };
 
-    const onDrop = (e, stage) => {
+    const handleDragEnter = (stage) => {
+        setDragOverStage(stage);
+    };
+
+    const handleDragLeave = () => {
+        setDragOverStage(null);
+    };
+
+    const handleDrop = (e, stage) => {
+        e.preventDefault();
         const eventId = e.dataTransfer.getData('eventId');
         if (eventId) {
             updateEventStage(eventId, stage);
         }
+        setDragOverStage(null);
     };
 
     const toggleMenu = (e, id) => {
@@ -30,173 +54,164 @@ const KanbanBoard = ({ events, updateEventStage, deleteEvent, onEditEvent, canWr
         setActiveMenu(activeMenu === id ? null : id);
     };
 
-    // Close menu when clicking elsewhere handled by transparent overlay or global listener, simpler:
     const closeMenu = () => setActiveMenu(null);
 
-    const getHeaderColor = (stage) => {
-        switch (stage) {
-            case 'Prospecting': return '#3b82f6';
-            case 'Processing': return '#f59e0b';
-            case 'Live': return '#f0e809ff';
-            case 'Completed': return '#22e714ff';
-            default: return 'black';
+    const handleCardClick = (e, event) => {
+        if (!e.defaultPrevented && canWrite) {
+            onEditEvent(event);
         }
     };
 
+    const handleMenuButtonClick = (e, eventId) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu(e, eventId);
+    };
+
+    const handleEditClick = (event) => {
+        onEditEvent(event);
+        closeMenu();
+    };
+
+    const handleDeleteClick = (eventId) => {
+        if (window.confirm('Are you sure you want to delete this deal?')) {
+            deleteEvent(eventId);
+            closeMenu();
+        }
+    };
+
+    const getStageClassName = (stage) => {
+        return stage.toLowerCase().replace(/\s+/g, '-');
+    };
+
+    const formatCurrency = (value) => {
+        return (value || 0).toLocaleString('en-IN');
+    };
+
+    const formatDate = (date) => {
+        return date ? new Date(date).toLocaleDateString('en-IN') : 'No date';
+    };
+
     return (
-        <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '40px', minHeight: '600px' }} onClick={closeMenu}>
-            {STAGES.map(stage => (
-                <div
-                    key={stage}
-                    onDragOver={onDragOver}
-                    onDrop={(e) => onDrop(e, stage)}
-                    style={{
-                        flex: '1',
-                        minWidth: '300px',
-                        backgroundColor: '#f8fafc',
-                        borderRadius: '16px',
-                        padding: '16px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '16px',
-                        border: '1px solid #e2e8f0'
-                    }}
-                >
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingBottom: '12px',
-                        borderBottom: `3px solid ${getHeaderColor(stage)}`
-                    }}>
-                        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: '#1e293b' }}>{stage}</h3>
-                        <span style={{
-                            fontSize: '0.75rem', fontWeight: '600',
-                            backgroundColor: 'white',
-                            padding: '2px 10px',
-                            borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
-                            color: '#64748b'
-                        }}>
-                            {events.filter(e => e.stage === stage).length}
-                        </span>
-                    </div>
+        <div className="kanban-board" onClick={closeMenu}>
+            {allStages.map(stage => {
+                const stageEvents = events.filter(e => e.stage === stage);
+                const stageClass = getStageClassName(stage);
+                const isDragOver = dragOverStage === stage;
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-                        {events.filter(e => e.stage === stage).map(event => (
-                            <div
-                                key={event._id}
-                                draggable
-                                onDragStart={(e) => onDragStart(e, event._id)}
-                                style={{
-                                    backgroundColor: 'white',
-                                    padding: '16px',
-                                    borderRadius: '12px',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                    cursor: canWrite ? 'grab' : 'default',
-                                    border: '1px solid #f1f5f9',
-                                    position: 'relative',
-                                    transition: 'all 0.2s ease',
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 8px 12px -3px rgba(0, 0, 0, 0.05)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-                                }}
-                            >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
-                                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '600', color: '#0f172a' }}>{event.title}</h4>
+                return (
+                    <div
+                        key={stage}
+                        className={`kanban-column ${isDragOver ? 'drag-over' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragEnter={() => handleDragEnter(stage)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, stage)}
+                    >
+                        <div className={`kanban-column-header ${stageClass}`}>
+                            <h3 className={`kanban-column-title ${stageClass}`}>
+                                {stage}
+                            </h3>
+                            <span className="kanban-column-count">
+                                {stageEvents.length}
+                            </span>
+                        </div>
 
-                                    {/* Action Menu Trigger */}
-                                    <div style={{ position: 'relative' }}>
-                                        {(canWrite || canDelete) && (
-                                            <button
-                                                onClick={(e) => toggleMenu(e, event._id)}
-                                                style={{
-                                                    background: 'none', border: 'none', cursor: 'pointer', color: '#64748b',
-                                                    padding: '4px', borderRadius: '4px'
-                                                }}
-                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
-                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                            >
-                                                <MoreHorizontal size={18} />
-                                            </button>
-                                        )}
+                        <div className="kanban-card-list">
+                            {stageEvents.length === 0 ? (
+                                <div className="kanban-empty-state">
+                                    No items in this stage
+                                </div>
+                            ) : (
+                                stageEvents.map(event => (
+                                    <div
+                                        key={event._id}
+                                        draggable={canWrite}
+                                        onDragStart={(e) => handleDragStart(e, event._id)}
+                                        onClick={(e) => handleCardClick(e, event)}
+                                        className={`kanban-card ${canWrite ? 'clickable draggable' : ''}`}
+                                    >
+                                        <div className="kanban-card-header">
+                                            <h4 className="kanban-card-title">
+                                                {event.title || 'Untitled'}
+                                            </h4>
 
-                                        {/* Dropdown Menu */}
-                                        {activeMenu === event._id && (
-                                            <div style={{
-                                                position: 'absolute', top: '100%', right: 0, zIndex: 10,
-                                                backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
-                                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', overflow: 'hidden', minWidth: '120px'
-                                            }} onClick={(e) => e.stopPropagation()}>
-                                                {canWrite && (
-                                                    <button
-                                                        onClick={() => { onEditEvent(event); closeMenu(); }}
-                                                        style={{ ...menuItemStyle, color: '#475569' }}
+                                            <div className="kanban-card-actions">
+                                                {event.stage === 'Live' && event.changeLog && event.changeLog.length > 0 && (
+                                                    <span
+                                                        className="kanban-warning-icon"
+                                                        title="Changes detected in Live stage"
                                                     >
-                                                        <Edit size={14} /> Edit
+                                                        ⚠️
+                                                    </span>
+                                                )}
+
+                                                {(canWrite || canDelete) && (
+                                                    <button
+                                                        className="kanban-menu-button"
+                                                        onClick={(e) => handleMenuButtonClick(e, event._id)}
+                                                        aria-label="Open menu"
+                                                    >
+                                                        <MoreHorizontal size={18} />
                                                     </button>
                                                 )}
-                                                {canDelete && (
-                                                    <button
-                                                        onClick={() => { deleteEvent(event._id); closeMenu(); }}
-                                                        style={{ ...menuItemStyle, color: '#ef4444' }}
+
+                                                {activeMenu === event._id && (
+                                                    <div
+                                                        className="kanban-dropdown-menu"
+                                                        onClick={(e) => e.stopPropagation()}
                                                     >
-                                                        <Trash2 size={14} /> Delete
-                                                    </button>
+                                                        {canWrite && (
+                                                            <button
+                                                                className="kanban-menu-item edit"
+                                                                onClick={() => handleEditClick(event)}
+                                                            >
+                                                                <Edit size={14} /> Edit
+                                                            </button>
+                                                        )}
+                                                        {canDelete && (
+                                                            <button
+                                                                className="kanban-menu-item delete"
+                                                                onClick={() => handleDeleteClick(event._id)}
+                                                            >
+                                                                <Trash2 size={14} /> Delete
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <MapPin size={14} /> {event.venue || 'No Venue'}
-                                    </div>
-                                    <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <Users size={14} /> {event.attendees ? `${event.attendees} Attendees` : 'Attendees not set'}
-                                    </div>
-                                    <div style={{
-                                        marginTop: '4px',
-                                        fontSize: '0.9rem', fontWeight: '600', color: '#3b82f6',
-                                        backgroundColor: '#eff6ff', width: 'fit-content', padding: '4px 8px', borderRadius: '6px',
-                                        display: 'flex', alignItems: 'center', gap: '4px'
-                                    }}>
-                                        <IndianRupee size={12} /> {(event.value || 0).toLocaleString()}
-                                    </div>
-                                    {event.date && (
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <Calendar size={12} /> {new Date(event.date).toLocaleDateString()}
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
+
+                                        <div className="kanban-card-content">
+                                            <div className="kanban-card-info">
+                                                <MapPin size={14} />
+                                                {event.venue || 'No Venue'}
+                                            </div>
+
+                                            <div className="kanban-card-info">
+                                                <Users size={14} />
+                                                {event.attendees ? `${event.attendees} Attendees` : 'Attendees not set'}
+                                            </div>
+
+                                            <div className="kanban-card-value">
+                                                <IndianRupee size={12} />
+                                                {formatCurrency(event.value)}
+                                            </div>
+
+                                            {event.date && (
+                                                <div className="kanban-card-date">
+                                                    <Calendar size={12} />
+                                                    {formatDate(event.date)}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };
-
-const menuItemStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    width: '100%',
-    padding: '10px 16px',
-    backgroundColor: 'white',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '0.85rem',
-    fontWeight: '500',
-    textAlign: 'left',
-    transition: 'background-color 0.2s'
-};
-
-export { KanbanBoard };

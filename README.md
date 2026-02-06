@@ -1,103 +1,94 @@
-# Command Center - Architecture & Routing Guide
+# Event Organization CRM - Command Center
 
-This document provides a comprehensive overview of the navigation structure, routing logic, and Role-Based Access Control (RBAC) implemented in the Command Center platform.
-
-## 🚀 Navigation Structure
-
-The application uses a dynamic sidebar with collapsible sections and granular permission checks.
-
-### 1. Main Dashboard
-- **Home**: `/home` - General overview and metrics.
-- **Reports**: `/reports` - Detailed system reports.
-- **Analytics**: `/analytics` - Data visualization and insights.
-- **My Requests**: `/my-requests` - **(Assistance Role)** Workspace for fulfilling approved leads.
-
-### 2. Sales Module
-- **Leads**: `/sales/leads` - Central lead management with Approval/Deny workflow.
-- **Contacts**: `/sales/contacts` - Business contact directory.
-- **Documents**: `/sales/documents` - Sales-related files and contracts.
-- **Campaigns**: `/sales/campaigns` - Marketing and outreach tracking.
-- **Pipeline**: `/sales/pipeline` - Visual Kanban/Pipeline view.
-
-### 3. Activities Module
-- **Tasks**: `/activities/tasks` - To-do lists and management.
-- **Meetings**: `/activities/meetings` - Calendar and schedule.
-- **Email**: External link to [Gmail](https://mail.google.com).
-
-### 4. Inventory Module
-- **Products**: `/inventory/products` - Catalog management.
-- **Orders**: `/inventory/orders` - Transaction tracking.
-- **Invoices**: `/inventory/invoices` - Billing and records.
-- **Vendors**: `/inventory/vendors` - Supplier management.
-
-### 5. Management
-- **Account Settings**: `/profile/settings` - User profile and preferences.
-- **Logout**: Triggers session termination and redirects to `/auth/login`.
+A high-performance, production-ready MERN stack application for coordinating large-scale events, tracking sales pipelines, and managing organizational data with robust synchronization and security.
 
 ---
 
-## 🔒 Routing & Security
+## 🌟 Core Features
 
-### Public Routes (No Auth Required)
-- **Login**: `/auth/login` - System entry point.
-- **Public Lead Capture**: `/inquiry` - High-end form for external customers/ads to submit leads directly into the system.
+### 1. **Visual Kanban Pipeline**
+- **Shared View**: Collaborate across all roles (Admin, Lead Planner, Assistant) on the same operational grid.
+- **Drag & Drop**: Fluidly move events through stages: *Prospecting* → *Processing* → *Live* → *Completed*.
+- **Change Audit Log**: Automatic tracking of all modifications when an event is in the 'Live' stage.
+- **Modern UI**: Clean, responsive design with interactive states and production-standard CSS.
 
-### Internal Route Logic (`App.jsx`)
-- All internal routes are wrapped in a `DashboardLayout` which provides the Sidebar and Header.
-- **Protected Routes**: Most features are wrapped in `<ProtectedRoute />` which checks for valid authentication and feature-level access.
-- **Granular RBAC**: The `/sales/leads` route uses deeper logic via the `AccessControlContext` to enable/disable specific UI actions (Approve, Edit, Delete) based on permission keys.
+### 2. **Hybrid Cloud Synchronization**
+- **Dynamic Connection**: Automatically connects to the **Cloud MongoDB (Atlas)** by default.
+- **Offline Fallback**: Seamlessly switches to **Local MongoDB** if cloud connection fails.
+- **Auto-Sync**: Triggers an automatic backup from Local -> Cloud on successful connection (with activity-exclusion filters).
+- **Manual Protocol**: Forced synchronization available via Account Settings for administrative oversight.
 
----
+### 3. **Role-Based Security (RBAC)**
+- **Granular Protection**: Case-insensitive permission matching for **Admin**, **Lead Planner**, and **Assistant** roles.
+- **Dynamic Matrix**: Permissions for every module (Sales, Activities, Inventory, Management) are stored in the database and can be updated in real-time.
+- **Session Security**: Automatic logout after 30 minutes of inactivity and enforced password changes for new accounts.
 
-## 🎭 Role-Based Access Control (RBAC)
-
-Permissions are defined in `client/src/security/policy.js` and enforced both on the Frontend (UI mounting) and Backend (API Middleware).
-
-| Role | Access Level | Key Capabilities |
-| :--- | :--- | :--- |
-| **Admin** | Full Access | Complete power over all modules and data deletion. |
-| **Lead Planner**| Manage | Can Approve/Deny new leads, create/edit records. |
-| **Assistant** | Fulfillment | "My Requests" access, can process Approved leads, data is masked in Leads view. |
-
-### Lead Workflow Logic
-1. **Inquiry (Public)**: Customer fills form at `/inquiry`.
-2. **Approval (Planner/Admin)**: Lead appears as `New`. Admin clicks ✅ (Approve) or ❌ (Deny).
-3. **Fulfillment (Assistant)**: Approved leads move to "My Requests". Assistant moves them from `Approved` -> `Processing` -> `Completed`.
+### 4. **Reporting & Analytics**
+- **Interactive Dashboards**: Data visualization for distribution and performance metrics.
+- **Document Management**: Secure storage and retrieval of event dossiers and contracts.
+- **Operational Auditing**: Detailed logs for logins, logouts, and data transformations.
 
 ---
 
-## 🛠 Backend API Routes
+## 🚀 Navigation Guide
 
-- **Auth**: `/api/auth`
-- **Leads**: `/api/leads`
-  - `POST /public`: Public lead intake.
-  - `PATCH /:id/status`: Workflow transition logic.
-- **Contacts**: `/api/contacts`
-- **Tasks**: `/api/tasks`
-- **Inventory**: `/api/products`, `/api/orders`, `/api/invoices`
-- **Reports**: `/api/reports`
-  - `GET /`: Fetch all operational reports.
-  - `POST /`: Initialize a new report (Admin only).
-  - `PUT /:id`: Update any field in an existing report (Admin only).
-  - `DELETE /:id`: Decommission a report (Admin only).
-  - `GET /download/:id`: Securely download attached dossier file.
+### 📂 Sales Module
+- **Leads**: `/sales/leads` - Lead capture and approval workflow.
+- **Contacts**: `/sales/contacts` - Unified contact directory.
+- **Pipeline**: `/sales/pipeline` - The Kanban Command Center.
+- **Documents**: `/sales/documents` - Contractual and operational files.
+- **Campaigns**: `/sales/campaigns` - Outreach and marketing tracking.
+
+### 📂 Activities Module
+- **Tasks**: `/activities/tasks` - To-do management.
+- **Meetings**: `/activities/meetings` - Event calendar and schedules.
+
+### 📂 Inventory & Management
+- **Inventory Sub-Hub**: Products, Orders, Invoices, and Vendors.
+- **Account Settings**: Theme control, Profile management, and DB Synchronization.
 
 ---
 
-## 🕵️‍♂️ Secret Analytics Engine
+## 🛠 Tech Stack
 
-The system contains a hidden analytics and manual-entry system for high-level event auditing.
+- **Frontend**: React 18, Vite, Lucide Icons, Recharts, Axios.
+- **Backend**: Node.js, Express, Mongoose, JWT, CryptoJS.
+- **Database**: MongoDB (Atlas Cloud + Local Community Server).
+- **Styling**: Vanilla CSS (Production Extracted), Tailwind (Utility).
 
-### Hidden Frontend Routes
-- **Hidden Manual Entry**: `/admin/secret-manual-entry` (Unlinked, requires manual URL navigation)
+---
 
-### Protected API Endpoints (`/api/secret`)
-All endpoints in this router require a custom security header for validation.
-- **Header**: `X-ANTIGRAVITY-SECRET-KEY: antigravity-secret-2026`
-- **Behavior**: Returns `404 Not Found` if the header is missing or invalid (Security through Obscurity).
+## 📝 Setup & Deployment
 
-| Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/summary` | GET | Returns big-number metrics and all analytics records. |
-| `/data` | GET | Returns sorted raw analytics data. |
-| `/manual-entry`| POST | Injects new event performance data into the database. |
+### Environment Variables
+Create a `.env` file in the `server` directory and a `.env` file in the `client` directory using the provided `.env.example` templates.
+
+### Running Locally
+```bash
+# 1. Start Backend
+cd server
+npm install
+npm start
+
+# 2. Start Frontend
+cd client
+pnpm install
+pnpm run dev
+```
+
+### Database Seeding
+```bash
+cd server
+node scripts/seedReports.js
+```
+
+---
+
+## 🔐 Security Standards
+- **Wait Timeout**: Multi-layer loading states with 10-second automatic timeouts to prevent UI freezes.
+- **Data Masking**: Sensitive lead data is masked for restricted roles.
+- **Input Validation**: Sanitized data entry and server-side model validation.
+
+---
+
+*Developed and Orchestrated by the Project Creator - 2026*

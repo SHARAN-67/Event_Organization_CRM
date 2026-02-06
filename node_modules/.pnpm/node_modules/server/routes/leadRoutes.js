@@ -8,21 +8,29 @@ const { PERMISSIONS } = require('../security/rbacPolicy');
 
 // GET all leads
 // Requires VIEW permission. Auto-masks data for Assistants.
+// GET all leads
+// Requires VIEW permission. Auto-masks data for Assistants.
 router.get('/', authMiddleware(), requireAccess(PERMISSIONS.LEADS.VIEW, 'leads'), async (req, res) => {
     try {
         const query = {};
+
+        // VISIBILITY CONTROL: Enforce "My Leads" view for Assistants
+        if (req.user.role === 'Assistant') {
+            query.assignedTo = req.user.id;
+        }
+
+        // Optional filter (e.g. for Admins filtering by specific user)
         if (req.query.assignedTo) {
             try {
+                // If query param is present, it overrides/refines (though Assistant loop above sets it too)
                 query.assignedTo = new mongoose.Types.ObjectId(req.query.assignedTo);
             } catch (err) {
-                // If invalid ID, don't return anything or handle as error
                 return res.json([]);
             }
         }
 
-        const leads = await Lead.find(query).sort({ createdAt: -1 }).populate('assignedTo', 'name email role');
+        const leads = await Lead.find(query).sort({ createdAt: -1 }).populate('assignedTo', 'name email role agId');
         // Map _id to id for frontend compatibility
-        // Note: Formatting is done here, masking happens in res.json() override
         const formattedLeads = leads.map(lead => ({
             ...lead.toObject(),
             id: lead._id

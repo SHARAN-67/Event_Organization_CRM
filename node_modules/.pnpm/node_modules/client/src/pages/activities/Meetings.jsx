@@ -297,271 +297,281 @@ const ScheduleCalendar = () => {
     const selectedEvents = getEventsForSelectedDate();
 
     return (
-        React.createElement('div', { className: 'calendar-page' },
-            React.createElement('header', { className: 'calendar-header' },
-                React.createElement('h1', null, 'Schedule Calendar'),
-                React.createElement('p', null, 'Manage venue visits, AV setups, and important deadlines.')
-            ),
+        <div className="calendar-page">
+            <header className="calendar-header">
+                <h1>Schedule Calendar</h1>
+                <p>Manage venue visits, AV setups, and important deadlines.</p>
+            </header>
 
-            React.createElement('main', { className: 'calendar-layout' },
-                // Calendar Section
-                React.createElement('section', { className: 'calendar-card' },
-                    React.createElement('div', { className: 'calendar-top' },
-                        React.createElement('h2', { className: 'month-title' },
-                            currentDate.toLocaleString('default', { month: 'long' }) + ' ' + currentDate.getFullYear()
-                        ),
-                        React.createElement('div', { className: 'nav-controls' },
-                            React.createElement('button', { className: 'nav-btn', onClick: goToPreviousMonth },
-                                React.createElement(ChevronLeft, { size: 18 })
-                            ),
-                            React.createElement('button', { className: 'today-btn', onClick: goToToday }, 'Today'),
-                            React.createElement('button', { className: 'nav-btn', onClick: goToNextMonth },
-                                React.createElement(ChevronRight, { size: 18 })
-                            )
-                        )
-                    ),
+            <main className="calendar-layout">
+                {/* Calendar Section */}
+                <section className="calendar-card">
+                    <div className="calendar-top">
+                        <h2 className="month-title">
+                            {currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}
+                        </h2>
+                        <div className="nav-controls">
+                            <button className="nav-btn" onClick={goToPreviousMonth}>
+                                <ChevronLeft size={18} />
+                            </button>
+                            <button className="today-btn" onClick={goToToday}>Today</button>
+                            <button className="nav-btn" onClick={goToNextMonth}>
+                                <ChevronRight size={18} />
+                            </button>
+                        </div>
+                    </div>
 
-                    React.createElement('div', { className: 'weekday-row' },
-                        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d =>
-                            React.createElement('div', { key: d, className: 'weekday' }, d)
-                        )
-                    ),
+                    <div className="weekday-row">
+                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d =>
+                            <div key={d} className="weekday">{d}</div>
+                        )}
+                    </div>
 
-                    React.createElement('div', { className: 'days-grid' },
-                        calendarGrid.map((item, idx) =>
-                            React.createElement('div', {
-                                key: idx,
-                                onClick: () => item.current && setSelectedDate(item.day),
-                                className: `day-cell ${!item.current ? 'other-month' : ''} ${item.current && selectedDate === item.day ? 'selected' : ''} ${item.current && isToday(item.day) ? 'today' : ''}`
-                            },
-                                item.day,
-                                item.current && React.createElement('div', { className: 'day-events-indicator' },
-                                    getEventsForDay(item.day).slice(0, 3).map((ev, i) =>
-                                        React.createElement('div', {
-                                            key: i,
-                                            className: 'event-dot',
-                                            style: { backgroundColor: getEventTypeColor(ev.eventType) }
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    )
-                ),
+                    <div className="days-grid">
+                        {calendarGrid.map((item, idx) =>
+                            <div
+                                key={idx}
+                                onClick={() => item.current && setSelectedDate(item.day)}
+                                className={`day-cell ${!item.current ? 'other-month' : ''} ${item.current && selectedDate === item.day ? 'selected' : ''} ${item.current && isToday(item.day) ? 'today' : ''}`}
+                            >
+                                {item.day}
+                                {item.current && (
+                                    <div className="day-events-indicator">
+                                        {getEventsForDay(item.day).slice(0, 3).map((ev, i) =>
+                                            <div
+                                                key={i}
+                                                className="event-dot"
+                                                style={{ backgroundColor: getEventTypeColor(ev.eventType) }}
+                                            />
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </section>
 
-                // Side Panel
-                React.createElement('aside', { className: 'info-panel' },
-                    React.createElement('div', { className: 'panel-header' },
-                        React.createElement('h2', null, selectedDate ? `Events for ${currentDate.toLocaleString('default', { month: 'short' })} ${selectedDate}` : 'Select a date'),
-                        React.createElement('button', { className: 'add-event-btn', onClick: openCreateModal },
-                            React.createElement(Plus, { size: 16 }),
-                            ' Add'
-                        )
-                    ),
+                {/* Side Panel */}
+                <aside className="info-panel">
+                    <div className="panel-header">
+                        <h2>{selectedDate ? `Events for ${currentDate.toLocaleString('default', { month: 'short' })} ${selectedDate}` : 'Select a date'}</h2>
+                        <button className="add-event-btn" onClick={openCreateModal}>
+                            <Plus size={16} /> Add
+                        </button>
+                    </div>
 
-                    React.createElement('div', { className: 'eventType-legend' },
-                        React.createElement('h3', null, 'Event Types'),
-                        React.createElement('div', { className: 'legend-grid' },
-                            [
+                    <div className="eventType-legend">
+                        <h3>Event Types</h3>
+                        <div className="legend-grid">
+                            {[
                                 { label: 'Venue Visit', color: '#3b82f6' },
                                 { label: 'AV Setup', color: '#06b6d4' },
                                 { label: 'Meeting', color: '#10b981' },
                                 { label: 'Deadline', color: '#ef4444' }
                             ].map(type =>
-                                React.createElement('div', { key: type.label, className: 'legend-item' },
-                                    React.createElement('span', { className: 'legend-dot', style: { backgroundColor: type.color } }),
-                                    React.createElement('span', null, type.label)
-                                )
-                            )
-                        )
-                    ),
+                                <div key={type.label} className="legend-item">
+                                    <span className="legend-dot" style={{ backgroundColor: type.color }}></span>
+                                    <span>{type.label}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
-                    React.createElement('div', { className: 'events-list' },
-                        selectedEvents.length === 0
-                            ? React.createElement('span', { className: 'no-events' }, 'No events scheduled')
+                    <div className="events-list">
+                        {selectedEvents.length === 0
+                            ? <span className="no-events">No events scheduled</span>
                             : selectedEvents.map(event =>
-                                React.createElement('div', {
-                                    key: event._id,
-                                    className: 'event-item',
-                                    onClick: () => openEditModal(event),
-                                    title: 'Click to edit'
-                                },
-                                    React.createElement('div', {
-                                        className: 'event-color-bar',
-                                        style: { backgroundColor: getEventTypeColor(event.eventType) }
-                                    }),
-                                    React.createElement('div', { className: 'event-content' },
-                                        React.createElement('div', { className: 'event-title' }, event.eventName),
-                                        React.createElement('div', { className: 'event-venue' }, event.venue),
-                                        React.createElement('div', { className: 'event-meta' },
-                                            React.createElement('div', { className: `event-status status-${event.status.toLowerCase().replace(' ', '-')}` }, event.status),
-                                            React.createElement('span', { className: 'event-type-label' }, event.eventType)
-                                        )
-                                    )
-                                )
+                                <div
+                                    key={event._id}
+                                    className="event-item"
+                                    onClick={() => openEditModal(event)}
+                                    title="Click to edit"
+                                >
+                                    <div
+                                        className="event-color-bar"
+                                        style={{ backgroundColor: getEventTypeColor(event.eventType) }}
+                                    ></div>
+                                    <div className="event-content">
+                                        <div className="event-title">
+                                            {event.eventName}
+                                            {event.changeLog && event.changeLog.length > 0 && event.status === 'Live' && (
+                                                <span onClick={(e) => { e.stopPropagation(); openHistoryModal(event); }} style={{ marginLeft: '8px', fontSize: '12px', cursor: 'pointer' }}>⚠️</span>
+                                            )}
+                                        </div>
+                                        <div className="event-venue">{event.venue}</div>
+                                        <div className="event-meta">
+                                            <div className={`event-status status-${event.status.toLowerCase().replace(' ', '-')}`}>{event.status}</div>
+                                            <span className="event-type-label">{event.eventType}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             )
-                    )
-                )
-            ),
+                        }
+                    </div>
+                </aside>
+            </main>
 
-            // Modal
-            showModal && React.createElement('div', { className: 'modal-overlay', onClick: () => setShowModal(false) },
-                React.createElement('div', { className: 'modal-content', onClick: e => e.stopPropagation() },
-                    React.createElement('div', { className: 'modal-header' },
-                        React.createElement('h2', null, editingEvent ? 'Edit Event' : 'Create New Event'),
-                        React.createElement('button', { className: 'modal-close', onClick: () => setShowModal(false) },
-                            React.createElement(X, { size: 20 })
-                        )
-                    ),
+            {/* Event Form Modal */}
+            {showModal && (
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>{editingEvent ? 'Edit Event' : 'Create New Event'}</h2>
+                            <button className="modal-close" onClick={() => setShowModal(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
 
-                    React.createElement('form', { className: 'event-form', onSubmit: handleSubmit },
-                        // Event Name
-                        React.createElement('div', { className: 'form-group' },
-                            React.createElement('label', null, 'Event Name ', React.createElement('span', { className: 'required' }, '*')),
-                            React.createElement('input', {
-                                type: 'text',
-                                name: 'eventName',
-                                value: formData.eventName,
-                                onChange: handleInputChange,
-                                placeholder: 'Enter event name',
-                                className: errors.eventName ? 'error' : ''
-                            }),
-                            errors.eventName && React.createElement('span', { className: 'error-text' }, errors.eventName)
-                        ),
+                        <form className="event-form" onSubmit={handleSubmit}>
+                            {/* ... Form Content ... */}
+                            <div className="form-group">
+                                <label>Event Name <span className="required">*</span></label>
+                                <input
+                                    type="text"
+                                    name="eventName"
+                                    value={formData.eventName}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter event name"
+                                    className={errors.eventName ? 'error' : ''}
+                                />
+                                {errors.eventName && <span className="error-text">{errors.eventName}</span>}
+                            </div>
 
-                        // Description
-                        React.createElement('div', { className: 'form-group' },
-                            React.createElement('label', null, 'Description'),
-                            React.createElement('textarea', {
-                                name: 'description',
-                                value: formData.description,
-                                onChange: handleInputChange,
-                                placeholder: 'Enter description',
-                                rows: 3
-                            })
-                        ),
+                            <div className="form-group">
+                                <label>Description</label>
+                                <textarea
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter description"
+                                    rows="3"
+                                ></textarea>
+                            </div>
 
-                        // Date Row
-                        React.createElement('div', { className: 'form-row' },
-                            React.createElement('div', { className: 'form-group' },
-                                React.createElement('label', null, 'Start Date ', React.createElement('span', { className: 'required' }, '*')),
-                                React.createElement('input', {
-                                    type: 'date',
-                                    name: 'startDate',
-                                    value: formData.startDate,
-                                    onChange: handleInputChange,
-                                    className: errors.startDate ? 'error' : ''
-                                }),
-                                errors.startDate && React.createElement('span', { className: 'error-text' }, errors.startDate)
-                            ),
-                            React.createElement('div', { className: 'form-group' },
-                                React.createElement('label', null, 'End Date ', React.createElement('span', { className: 'required' }, '*')),
-                                React.createElement('input', {
-                                    type: 'date',
-                                    name: 'endDate',
-                                    value: formData.endDate,
-                                    onChange: handleInputChange,
-                                    className: errors.endDate ? 'error' : ''
-                                }),
-                                errors.endDate && React.createElement('span', { className: 'error-text' }, errors.endDate)
-                            )
-                        ),
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Start Date <span className="required">*</span></label>
+                                    <input
+                                        type="date"
+                                        name="startDate"
+                                        value={formData.startDate}
+                                        onChange={handleInputChange}
+                                        className={errors.startDate ? 'error' : ''}
+                                    />
+                                    {errors.startDate && <span className="error-text">{errors.startDate}</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label>End Date <span className="required">*</span></label>
+                                    <input
+                                        type="date"
+                                        name="endDate"
+                                        value={formData.endDate}
+                                        onChange={handleInputChange}
+                                        className={errors.endDate ? 'error' : ''}
+                                    />
+                                    {errors.endDate && <span className="error-text">{errors.endDate}</span>}
+                                </div>
+                            </div>
 
-                        // Venue
-                        React.createElement('div', { className: 'form-group' },
-                            React.createElement('label', null, 'Venue ', React.createElement('span', { className: 'required' }, '*')),
-                            React.createElement('input', {
-                                type: 'text',
-                                name: 'venue',
-                                value: formData.venue,
-                                onChange: handleInputChange,
-                                placeholder: 'Enter venue',
-                                className: errors.venue ? 'error' : ''
-                            }),
-                            errors.venue && React.createElement('span', { className: 'error-text' }, errors.venue)
-                        ),
+                            <div className="form-group">
+                                <label>Venue <span className="required">*</span></label>
+                                <input
+                                    type="text"
+                                    name="venue"
+                                    value={formData.venue}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter venue"
+                                    className={errors.venue ? 'error' : ''}
+                                />
+                                {errors.venue && <span className="error-text">{errors.venue}</span>}
+                            </div>
 
-                        // Event Type
-                        React.createElement('div', { className: 'form-group' },
-                            React.createElement('label', null, 'Event Type'),
-                            React.createElement('select', {
-                                name: 'eventType',
-                                value: formData.eventType,
-                                onChange: handleInputChange
-                            },
-                                React.createElement('option', { value: 'Meeting' }, 'Meeting'),
-                                React.createElement('option', { value: 'Venue Visit' }, 'Venue Visit'),
-                                React.createElement('option', { value: 'AV Setup' }, 'AV Setup'),
-                                React.createElement('option', { value: 'Deadline' }, 'Deadline')
-                            )
-                        ),
+                            <div className="form-group">
+                                <label>Event Type</label>
+                                <select
+                                    name="eventType"
+                                    value={formData.eventType}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="Meeting">Meeting</option>
+                                    <option value="Venue Visit">Venue Visit</option>
+                                    <option value="AV Setup">AV Setup</option>
+                                    <option value="Deadline">Deadline</option>
+                                </select>
+                            </div>
 
-                        // Status
-                        React.createElement('div', { className: 'form-group' },
-                            React.createElement('label', null, 'Status'),
-                            React.createElement('select', {
-                                name: 'status',
-                                value: formData.status,
-                                onChange: handleInputChange
-                            },
-                                React.createElement('option', { value: 'Planning' }, 'Planning'),
-                                React.createElement('option', { value: 'Confirmed' }, 'Confirmed'),
-                                React.createElement('option', { value: 'In Progress' }, 'In Progress'),
-                                React.createElement('option', { value: 'Completed' }, 'Completed'),
-                                React.createElement('option', { value: 'Cancelled' }, 'Cancelled')
-                            )
-                        ),
+                            <div className="form-group">
+                                <label>Status</label>
+                                <select
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="Planning">Planning</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    {/* Make sure Live is available */}
+                                    <option value="Live">Live</option>
+                                </select>
+                            </div>
 
-                        // Budget Row
-                        React.createElement('div', { className: 'form-row' },
-                            React.createElement('div', { className: 'form-group' },
-                                React.createElement('label', null, 'Budget'),
-                                React.createElement('input', {
-                                    type: 'number',
-                                    name: 'budget',
-                                    value: formData.budget,
-                                    onChange: handleInputChange,
-                                    min: 0
-                                })
-                            ),
-                            React.createElement('div', { className: 'form-group' },
-                                React.createElement('label', null, 'Amount Spent'),
-                                React.createElement('input', {
-                                    type: 'number',
-                                    name: 'amountSpent',
-                                    value: formData.amountSpent,
-                                    onChange: handleInputChange,
-                                    min: 0
-                                })
-                            )
-                        ),
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Budget</label>
+                                    <input
+                                        type="number"
+                                        name="budget"
+                                        value={formData.budget}
+                                        onChange={handleInputChange}
+                                        min={0}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Amount Spent</label>
+                                    <input
+                                        type="number"
+                                        name="amountSpent"
+                                        value={formData.amountSpent}
+                                        onChange={handleInputChange}
+                                        min={0}
+                                    />
+                                </div>
+                            </div>
 
-                        // Buttons
-                        React.createElement('div', { className: 'form-buttons' },
-                            editingEvent && React.createElement('button', {
-                                type: 'button',
-                                className: 'btn-danger',
-                                onClick: handleDelete,
-                                disabled: deleteLoading || loading
-                            }, deleteLoading ? 'Deleting...' : 'Delete Event'),
-
-                            React.createElement('div', { style: { flex: 1 } }), // Spacer
-
-                            React.createElement('button', {
-                                type: 'button',
-                                className: 'btn-secondary',
-                                onClick: () => setShowModal(false)
-                            }, 'Cancel'),
-                            React.createElement('button', {
-                                type: 'submit',
-                                className: 'btn-primary',
-                                disabled: loading || deleteLoading
-                            }, loading ? 'Saving...' : (editingEvent ? 'Update Event' : 'Create Event'))
-                        )
-                    )
-                )
-            )
-        )
+                            <div className="form-buttons">
+                                {editingEvent && (
+                                    <button
+                                        type="button"
+                                        className="btn-danger"
+                                        onClick={handleDelete}
+                                        disabled={deleteLoading || loading}
+                                    >
+                                        {deleteLoading ? 'Deleting...' : 'Delete Event'}
+                                    </button>
+                                )}
+                                <div style={{ flex: 1 }}></div>
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn-primary"
+                                    disabled={loading || deleteLoading}
+                                >
+                                    {loading ? 'Saving...' : (editingEvent ? 'Update Event' : 'Create Event')}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 

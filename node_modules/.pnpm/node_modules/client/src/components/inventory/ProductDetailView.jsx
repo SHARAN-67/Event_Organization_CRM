@@ -164,7 +164,7 @@ const ProductDetailView = ({ productId, isOpen, onClose, onRefresh, canEdit, can
                                             {productId ? `REG: ${productId.slice(-8)}` : 'Entry Mode: Initialization'}
                                         </p>
                                         {formData.resourceType === 'Owned' ? (
-                                            <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter border border-emerald-100 italic">Antigravity Asset</span>
+                                            <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter border border-emerald-100 italic">Core System Asset</span>
                                         ) : (
                                             <span className="bg-blue-50 text-blue-600 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter border border-blue-100 italic">Rental Cluster</span>
                                         )}

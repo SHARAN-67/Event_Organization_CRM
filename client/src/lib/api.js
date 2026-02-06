@@ -8,7 +8,7 @@ const api = axios.create({
 export const secretApi = axios.create({
     baseURL: 'http://localhost:5000/api/secret',
     headers: {
-        'X-ANTIGRAVITY-SECRET-KEY': 'antigravity-secret-2026',
+        'X-INTERNAL-SECURITY-TOKEN': 'project-secret-v1-2026',
         'Content-Type': 'application/json'
     }
 });

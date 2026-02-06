@@ -27,6 +27,9 @@ const secretRoutes = require('./routes/secretRoutes');
 const campaignRoutes = require('./routes/campaignRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const venueRoutes = require('./routes/venueRoutes');
+
+const { syncLocalToCloud } = require('./services/SyncService');
 
 // MongoDB Connection Status
 let dbStatus = "Disconnected";
@@ -37,8 +40,19 @@ const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URI_CLOUD);
     dbStatus = "Online (Cloud)";
     console.log("☁️  MongoDB Cloud Connected");
+
+    // Auto-sync Local -> Cloud (Excluding Activities as per config)
+    console.log("⏳ Starting Auto-Sync from Local to Cloud...");
+    syncLocalToCloud({ excludeActivities: true })
+      .then(results => {
+        console.log("✅ Auto-Sync Completed Successfully.");
+        const syncedCounts = results.synced.filter(r => r.count > 0).map(r => `${r.model}: ${r.count}`).join(', ');
+        if (syncedCounts) console.log("   Synced:", syncedCounts);
+      })
+      .catch(err => console.error("⚠️ Auto-Sync Failed:", err.message));
+
   } catch (cloudErr) {
-    console.error("❌ Cloud MongoDB Connection Error, falling back to local:", cloudErr.message);
+    console.error("❌ Cloud MongoDB Connection Error (Check IP Whitelist in Atlas):", cloudErr.message);
     try {
       // Fallback to Local Connection
       await mongoose.connect(process.env.MONGO_URI_LOCAL);
@@ -69,6 +83,7 @@ app.use('/api/secret', secretRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/venues', venueRoutes);
 
 app.get('/api/status', (req, res) => {
   res.json({

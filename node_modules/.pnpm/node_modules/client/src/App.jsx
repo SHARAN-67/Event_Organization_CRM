@@ -12,7 +12,9 @@ import Leads from './pages/sales/Leads.jsx';
 import Contacts from './pages/sales/Contacts.jsx';
 import Documents from './pages/sales/Documents.jsx';
 import Campaigns from './pages/sales/Campaigns.jsx';
+import Campaign from './pages/sales/Campaigns.jsx';
 import Pipeline from './pages/sales/Pipeline.jsx';
+import VenueGallery from './pages/VenueGallery.jsx';
 
 // Activities Pages
 import Tasks from './pages/activities/Tasks.jsx';
@@ -88,6 +90,11 @@ function App() {
                   <Route path="my-requests" element={
                     <ProtectedRoute feature="My Requests">
                       <MyRequests />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="venue-gallery" element={
+                    <ProtectedRoute feature="Venue Gallery">
+                      <VenueGallery />
                     </ProtectedRoute>
                   } />
 

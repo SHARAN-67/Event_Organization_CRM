@@ -6,7 +6,7 @@ import {
     Save, Plus, Trash2, Mail, Phone, Briefcase,
     Globe, DollarSign, ShieldCheck, Edit, Settings,
     Activity, RefreshCw, FileText, XCircle, ToggleLeft, ToggleRight,
-    Download, LogIn, LogOut, Clock, Key as KeyIcon
+    Download, LogIn, LogOut, Clock, Key as KeyIcon, Cloud, Database
 } from 'lucide-react';
 import AccessControl from '../access/AccessControl';
 import { useAuth } from '../../context/AuthContext';
@@ -120,27 +120,30 @@ const AccountSettings = () => {
             setLoading(true);
             try {
                 // 1. Fetch Company Config
-                const configRes = await axios.get(`${API_URL}/config`);
-                if (configRes.data) {
-                    setBusinessData({
-                        companyName: configRes.data.companyName || 'CN Events',
-                        currency: configRes.data.defaults?.currency || '₹',
-                        secondaryCurrency: configRes.data.defaults?.secondaryCurrency || '$',
-                        brandingColor: configRes.data.branding?.primaryColor || '#3b82f6',
-                        leadRules: configRes.data.leadSettings?.prioritizationRules || 'None',
-                        maintenanceMode: configRes.data.security?.maintenanceMode || false
-                    });
+                try {
+                    const configRes = await axios.get(`${API_URL}/config`);
+                    if (configRes.data) {
+                        setBusinessData({
+                            companyName: configRes.data.companyName || 'CN Events',
+                            currency: configRes.data.defaults?.currency || '₹',
+                            secondaryCurrency: configRes.data.defaults?.secondaryCurrency || '$',
+                            brandingColor: configRes.data.branding?.primaryColor || '#3b82f6',
+                            leadRules: configRes.data.leadSettings?.prioritizationRules || 'None',
+                            maintenanceMode: configRes.data.security?.maintenanceMode || false
+                        });
+                    }
+                } catch (configErr) {
+                    console.warn("Failed to fetch config (might be restricted/network)", configErr);
                 }
 
-                // 2. Fetch Team (Only if token exists)
+                // 2. Fetch User Data (Profile & Team)
                 if (currentUser.token) {
                     const headers = { Authorization: `Bearer ${currentUser.token}` };
-                    try {
-                        const teamRes = await axios.get(`${API_URL}/users`, { headers });
-                        setTeam(teamRes.data);
 
-                        // Sync Identity Data with latest DB record
-                        const me = teamRes.data.find(m => m._id === currentUser.id || m.id === currentUser.id);
+                    // A. Fetch Own Profile (Available to all authenticated users)
+                    try {
+                        const profileRes = await axios.get(`${API_URL}/profile`, { headers });
+                        const me = profileRes.data;
                         if (me) {
                             setIdentityData({
                                 name: me.name,
@@ -149,10 +152,30 @@ const AccountSettings = () => {
                                 phone_number: me.phone_number || ''
                             });
                             setIsLockPasswordSet(!!me.lockPassword);
+                            // Optional: update local user state if needed
                         }
                     } catch (err) {
-                        if (err.response?.status === 401 || err.response?.status === 403) {
-                            setAuthError("Session expired or invalid token. Some features may be limited.");
+                        if (err.response?.status === 401) {
+                            setAuthError("Session expired. Please log in again.");
+                        } else {
+                            console.error("Profile fetch error:", err);
+                        }
+                    }
+
+                    // B. Fetch Team (Only if privileged)
+                    // We check permission or role before making the request to avoid 403s
+                    if (canReadTeam || isAdmin) {
+                        try {
+                            const teamRes = await axios.get(`${API_URL}/users`, { headers });
+                            setTeam(teamRes.data);
+                        } catch (err) {
+                            // If we thought we had permission but didn't, don't show a global session error, just log it.
+                            // Only 401 is a critical session error.
+                            if (err.response?.status === 401) {
+                                setAuthError("Session expired or invalid token.");
+                            } else if (err.response?.status === 403) {
+                                console.warn("Access to Team List denied.");
+                            }
                         }
                     }
                 }
@@ -163,7 +186,7 @@ const AccountSettings = () => {
             }
         };
         fetchData();
-    }, [currentUser.token]);
+    }, [currentUser.token, canReadTeam, isAdmin]);
 
 
 
@@ -220,7 +243,11 @@ const AccountSettings = () => {
 
             if (editingMember) {
                 const res = await axios.put(`${API_URL}/users/${editingMember._id || editingMember.id}`, payload, { headers });
-                setTeam(team.map(m => (m._id === editingMember._id || m.id === editingMember.id) ? res.data.user : m));
+
+                // Refresh team list from server to ensure data consistency and prevent duplication bugs
+                const refreshRes = await axios.get(`${API_URL}/users`, { headers });
+                setTeam(refreshRes.data);
+
                 alert('Personnel record updated and synchronized.');
 
                 // Real-time reflection: If updating self, update identity state and AuthContext too
@@ -236,7 +263,11 @@ const AccountSettings = () => {
                 }
             } else {
                 const res = await axios.post(`${API_URL}/users`, payload, { headers });
-                setTeam([...team, res.data.user]);
+
+                // Refresh team list from server
+                const refreshRes = await axios.get(`${API_URL}/users`, { headers });
+                setTeam(refreshRes.data);
+
                 alert('New mission partner enlisted.');
             }
             setShowAddUser(false);
@@ -323,6 +354,34 @@ const AccountSettings = () => {
         }
     };
 
+    const handleSyncDB = async () => {
+        const confirmSync = window.confirm("Initiate data synchronization between Local Station and Cloud Database? This process uses the local DB as the source of truth.");
+        if (confirmSync) {
+            setLoading(true);
+            try {
+                const headers = { Authorization: `Bearer ${currentUser.token}` };
+                // Adjust path: API_URL is .../auth, we need .../admin/sync-db
+                const baseUrl = API_URL.replace('/auth', '');
+                const res = await axios.post(`${baseUrl}/admin/sync-db`, {}, { headers });
+
+                let detailsMsg = res.data.details.synced
+                    .filter(d => d.count > 0)
+                    .map(d => `${d.model}: ${d.count}`)
+                    .join('\n');
+
+                if (!detailsMsg) detailsMsg = "No changes needed.";
+
+                alert(`Synchronization Protocol Complete.\n\nUpdated Records:\n${detailsMsg}`);
+            } catch (err) {
+                console.error("Sync Error:", err);
+                const errMsg = err.response?.data?.error || err.message;
+                alert(`Synchronization Aborted: ${errMsg}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
     if (isLocked) {
         return (
             <div style={{
@@ -379,11 +438,27 @@ const AccountSettings = () => {
                     </div>
                 )}
 
-                <div style={{ marginBottom: '32px' }}>
-                    <h1 style={{ fontSize: '36px', fontWeight: '900', color: textColor, marginBottom: '8px' }}>
-                        {currentUserRole || 'User'} Command Center
-                    </h1>
-                    <p style={{ color: subTextColor, fontSize: '18px' }}>Centralized hub for workforce, security, and global business parameters.</p>
+                <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                        <h1 style={{ fontSize: '36px', fontWeight: '900', color: textColor, marginBottom: '8px' }}>
+                            {currentUserRole || 'User'} Command Center
+                        </h1>
+                        <p style={{ color: subTextColor, fontSize: '18px' }}>Centralized hub for workforce, security, and global business parameters.</p>
+                    </div>
+                    {(isAdmin || isAssistant) && (
+                        <button
+                            onClick={handleSyncDB}
+                            style={{
+                                ...PrimaryBtnStyle,
+                                backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff',
+                                color: '#3b82f6',
+                                border: '1px solid #3b82f6',
+                                boxShadow: 'none'
+                            }}
+                        >
+                            <Database size={18} /> SYNC DATABASES
+                        </button>
+                    )}
                 </div>
 
                 <div style={{ display: 'flex', gap: '32px' }}>

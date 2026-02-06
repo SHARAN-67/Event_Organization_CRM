@@ -10,7 +10,7 @@ import { useTheme } from '../../theme/ThemeContext';
 
 const LEAD_STATUSES = ['New', 'Contacted', 'Qualified', 'Lost', 'Negotiation', 'Won', 'Approved', 'Rejected', 'Processing', 'Completed', 'Other'];
 
-const LeadFormDialog = ({ open, onOpenChange, initialData = null, onSubmit, readOnly = false }) => {
+const LeadFormDialog = ({ open, onOpenChange, initialData = null, onSubmit, readOnly = false, assistants = [] }) => {
     const { theme } = useTheme();
     const isDark = theme === 'dark' || theme === 'night';
     const [formData, setFormData] = useState({
@@ -40,7 +40,8 @@ const LeadFormDialog = ({ open, onOpenChange, initialData = null, onSubmit, read
                     otherStatus: isOther ? initialData.status : '',
                     source: initialData.source || '',
                     notes: initialData.notes || '',
-                    owner: initialData.owner || ''
+                    owner: initialData.owner || '',
+                    assignedTo: initialData.assignedTo ? (initialData.assignedTo._id || initialData.assignedTo) : ''
                 });
             } else {
                 setFormData({
@@ -53,7 +54,8 @@ const LeadFormDialog = ({ open, onOpenChange, initialData = null, onSubmit, read
                     source: '',
                     notes: '',
                     otherStatus: '',
-                    owner: ''
+                    owner: '',
+                    assignedTo: ''
                 });
             }
         }
@@ -211,14 +213,28 @@ const LeadFormDialog = ({ open, onOpenChange, initialData = null, onSubmit, read
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                             <Label style={{ display: 'flex', alignItems: 'center' }}><User size={14} style={{ marginRight: '6px' }} /> Assigned To</Label>
-                            <Input
-                                name="owner"
-                                value={formData.owner}
-                                onChange={handleChange}
-                                placeholder="e.g. Mike Sales"
-                                required
-                                disabled={readOnly}
-                            />
+                            {readOnly ? (
+                                <Input
+                                    value={initialData?.assignedTo?.name || (assistants.find(a => a._id === formData.assignedTo)?.name) || 'Unassigned'}
+                                    disabled
+                                />
+                            ) : (
+                                <Select
+                                    value={formData.assignedTo}
+                                    onValueChange={(value) => setFormData(prev => ({ ...prev, assignedTo: value }))}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select User" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {assistants.map(a => (
+                                            <SelectItem key={a._id} value={a._id}>
+                                                {a.agId ? `[${a.agId}] ` : ''}{a.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
                         </div>
                     </div>
 

@@ -33,6 +33,13 @@
     width: 100%;
 }
 
+/* Days Grid */
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
 /* Calendar Card */
 .calendar-card {
     background: var(--bg-secondary);
@@ -112,12 +119,6 @@
     padding: 8px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-/* Days Grid */
-.days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
     gap: 4px;
 }
 

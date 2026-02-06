@@ -37,19 +37,27 @@ const MyRequests = () => {
         }
     };
 
+    const handleAcceptMission = async (id) => {
+        const result = await updateLeadStatus(id, 'Accepted');
+        if (!result.success) alert(result.error);
+    };
+
     // Filter leads assigned to the current user
     const myWorkItems = leads.filter(l => {
         const leadAssignedToId = l.assignedTo?._id?.toString() || l.assignedTo?.id?.toString() || l.assignedTo?.toString();
         const currentUserId = userId?.toString();
 
+        // Include 'New' status so users can see and accept new assignments
         return leadAssignedToId === currentUserId &&
-            ['Accepted', 'Processing', 'Completed', 'Denied'].includes(l.status);
+            ['New', 'Accepted', 'Processing', 'Completed', 'Denied'].includes(l.status);
     });
 
     const StatusBadge = ({ status }) => {
         const baseClasses = "px-4 py-1.5 rounded-full text-[10px] font-black border uppercase tracking-widest";
 
         switch (status) {
+            case 'New':
+                return <span className={`${baseClasses} bg-indigo-500/10 text-indigo-500 border-indigo-500/20`}>Pending Acceptance</span>;
             case 'Accepted':
             case 'Approved':
                 return <span className={`${baseClasses} bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]`}>Accepted</span>;
@@ -153,6 +161,16 @@ const MyRequests = () => {
                                     </td>
                                     <td className="p-6">
                                         <div className="flex flex-wrap gap-3 items-center">
+                                            {/* Action: Accept (Only if New) */}
+                                            {item.status === 'New' && (
+                                                <button
+                                                    onClick={() => handleAcceptMission(item._id || item.id)}
+                                                    className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+                                                >
+                                                    <CheckCircle2 size={16} /> Accept Mission
+                                                </button>
+                                            )}
+
                                             {/* Action: Start Processing (Only if Accepted) */}
                                             {(item.status === 'Accepted' || item.status === 'Approved') && (
                                                 <button

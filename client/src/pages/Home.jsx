@@ -8,21 +8,14 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const { theme } = useTheme();
+    // Theme is handled by CSS variables in index.css classes (bg-main, text-main, etc.)
     const { userName } = useAuth();
     const navigate = useNavigate();
 
-    const isDark = theme === 'dark' || theme === 'night';
-    const textColor = isDark ? '#f1f5f9' : '#0f172a';
-    const subTextColor = isDark ? '#94a3b8' : '#64748b';
-    const cardBg = theme === 'light' ? '#ffffff' : theme === 'dark' ? 'rgba(30, 41, 59, 0.5)' : 'rgba(15, 23, 42, 0.5)';
-    const bgColor = theme === 'light' ? '#f8fafc' : theme === 'dark' ? '#0f172a' : '#020617';
-    const borderColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#e2e8f0';
-
     return (
-        <div className="min-h-screen transition-colors duration-500 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000" style={{ backgroundColor: bgColor, color: textColor }}>
+        <div className="min-h-screen transition-colors duration-500 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 bg-main text-main">
             {/* Hero Section */}
-            <div className="relative overflow-hidden rounded-[3rem] p-12 lg:p-20 border" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+            <div className="relative overflow-hidden rounded-[3rem] p-12 lg:p-20 border bg-card border-main">
                 <div className="absolute top-0 right-0 p-10 opacity-5">
                     <Cpu size={300} className="text-emerald-500" />
                 </div>
@@ -33,7 +26,7 @@ const Home = () => {
                         <span className="text-[10px] font-black uppercase tracking-[0.4em]">System Protocol Active</span>
                     </div>
 
-                    <h1 className="text-5xl lg:text-7xl font-black tracking-tighter mb-8 leading-[0.9]" style={{ color: textColor }}>
+                    <h1 className="text-5xl lg:text-7xl font-black tracking-tighter mb-8 leading-[0.9] text-main">
                         WELCOME <br />
                         <span className="text-emerald-500 text-6xl lg:text-8xl">COMMANDER</span>
                     </h1>
@@ -51,8 +44,7 @@ const Home = () => {
                         </button>
                         <button
                             onClick={() => navigate('/sales/leads')}
-                            className="border px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-white/5 transition-all"
-                            style={{ borderColor: borderColor, color: textColor }}
+                            className="border px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-white/5 transition-all border-main text-main"
                         >
                             Open Pipeline
                         </button>
@@ -67,14 +59,14 @@ const Home = () => {
                     { label: 'Security Level', value: 'Maximum', icon: Shield, color: 'text-emerald-500' },
                     { label: 'Network status', value: 'Global', icon: Globe, color: 'text-purple-500' }
                 ].map((item, idx) => (
-                    <div key={idx} className="relative group overflow-hidden border p-8 rounded-[2.5rem] transition-all duration-500 shadow-sm hover:shadow-xl hover:translate-y-[-4px]" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                    <div key={idx} className="relative group overflow-hidden border p-8 rounded-[2.5rem] transition-all duration-500 shadow-sm hover:shadow-xl hover:translate-y-[-4px] bg-card border-main">
                         <div className="flex items-center gap-4 mb-6">
                             <div className={`p-4 rounded-2xl bg-slate-500/5 ${item.color}`}>
                                 <item.icon size={24} />
                             </div>
                             <div className="text-left">
                                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{item.label}</h3>
-                                <p className="text-xl font-black uppercase tracking-tight" style={{ color: textColor }}>{item.value}</p>
+                                <p className="text-xl font-black uppercase tracking-tight text-main">{item.value}</p>
                             </div>
                         </div>
                     </div>
@@ -83,12 +75,12 @@ const Home = () => {
 
             {/* Sub Features Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="border p-10 rounded-[3rem] transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                <div className="border p-10 rounded-[3rem] transition-all bg-card border-main">
                     <div className="flex items-center gap-4 mb-8">
                         <div className="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                             <TrendingUp size={20} />
                         </div>
-                        <h2 className="text-xl font-black uppercase tracking-tighter" style={{ color: textColor }}>Efficiency Protocol</h2>
+                        <h2 className="text-xl font-black uppercase tracking-tighter text-main">Efficiency Protocol</h2>
                     </div>
                     <p className="text-sm font-bold opacity-30 uppercase tracking-tight leading-relaxed text-left mb-8">
                         Automated lead scoring and sentiment analysis are currently processing 45 fragments per minute. System throughput is at 99.8%.
@@ -102,22 +94,22 @@ const Home = () => {
                     </div>
                 </div>
 
-                <div className="border p-10 rounded-[3rem] transition-all relative group overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                <div className="border p-10 rounded-[3rem] transition-all relative group overflow-hidden bg-card border-main">
                     <div className="flex items-center gap-4 mb-8">
                         <div className="w-10 h-10 bg-purple-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
                             <Box size={20} />
                         </div>
-                        <h2 className="text-xl font-black uppercase tracking-tighter" style={{ color: textColor }}>Active Modules</h2>
+                        <h2 className="text-xl font-black uppercase tracking-tighter text-main">Active Modules</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         {['Sales Core', 'Inventory Hub', 'Activity Tracker', 'Analytics Grid'].map((mod, i) => (
-                            <div key={i} className="bg-slate-500/5 border p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center" style={{ borderColor: borderColor }}>
+                            <div key={i} className="bg-slate-500/5 border p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center border-main">
                                 {mod}
                             </div>
                         ))}
                     </div>
-                    <div className="mt-8 pt-8 border-t flex items-center justify-between" style={{ borderColor: borderColor }}>
-                        <span className="text-[10px] font-black opacity-30 uppercase tracking-[0.3em]">Antigravity UI Sync</span>
+                    <div className="mt-8 pt-8 border-t flex items-center justify-between border-main">
+                        <span className="text-[10px] font-black opacity-30 uppercase tracking-[0.3em]">System UI Sync</span>
                         <div className="flex -space-x-2">
                             {[1, 2, 3].map(i => (
                                 <div key={i} className="w-6 h-6 rounded-lg bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-[8px] font-bold text-slate-500">

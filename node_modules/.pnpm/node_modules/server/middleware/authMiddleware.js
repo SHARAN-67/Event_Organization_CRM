@@ -39,13 +39,16 @@ const checkPermission = (feature, permission) => {
             if (!rule) return next(); // If no rule exists, default to allowing (or change to deny if preferred)
 
             // Map JWT role to AccessRule field
+            // Normalize role for mapping
+            const normalizedRole = req.user.role ? req.user.role.toLowerCase() : '';
+
             const roleFieldMap = {
-                'Admin': 'admin',
-                'Lead Planner': 'leadPlanner',
-                'Assistant': 'assistant'
+                'admin': 'admin',
+                'lead planner': 'leadPlanner',
+                'assistant': 'assistant'
             };
 
-            const field = roleFieldMap[req.user.role];
+            const field = roleFieldMap[normalizedRole];
             if (!field || !rule[field].includes(permission)) {
                 return res.status(403).json({
                     error: `Security Protocol Breach: Role '${req.user.role}' lacks '${permission}' authorization for '${feature}'.`

@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { Plus, Kanban, Layers, Shield, RefreshCw } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Plus, Kanban, Layers, Shield, RefreshCw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { KanbanBoard } from "@/components/pipeline/KanbanBoard.jsx";
 import { EventFormDialog } from "@/components/pipeline/EventFormDialog.jsx";
 import { useEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "../../theme/ThemeContext";
+import './Pipeline.css';
 
 export default function Pipeline() {
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -14,12 +15,26 @@ export default function Pipeline() {
     const { hasPermission } = useAuth();
     const { theme } = useTheme();
 
+    // History Modal State
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [selectedHistoryEvent, setSelectedHistoryEvent] = useState(null);
+
     const canWrite = hasPermission('Pipeline', 'Write');
     const canDelete = hasPermission('Pipeline', 'Delete');
 
     useEffect(() => {
         fetchEvents();
     }, [fetchEvents]);
+
+    // Calculate events with unread changes (Live status and has changeLog)
+    const unreadChangesEvents = useMemo(() => {
+        return events.filter(ev => ev.stage === 'Live' && ev.changeLog && ev.changeLog.length > 0);
+    }, [events]);
+
+    const openHistoryModal = (event) => {
+        setSelectedHistoryEvent(event);
+        setShowHistoryModal(true);
+    };
 
     const isDark = theme === 'dark' || theme === 'night';
     const textColor = isDark ? '#f1f5f9' : '#0f172a';
@@ -70,11 +85,28 @@ export default function Pipeline() {
                             <Plus size={16} /> New Fragment
                         </button>
                     )}
-                    <button className="p-3 border rounded-2xl transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor, color: subTextColor }}>
+                    <button
+                        onClick={() => fetchEvents()}
+                        className="p-3 border rounded-2xl transition-all hover:rotate-180 duration-500"
+                        style={{ backgroundColor: cardBg, borderColor: borderColor, color: subTextColor }}
+                        title="Refresh Pipeline Data"
+                    >
                         <RefreshCw size={20} />
                     </button>
                 </div>
             </div>
+
+            {/* Warning Banner */}
+            {unreadChangesEvents.length > 0 && (
+                <div className="warning-banner" style={{ margin: '0 32px' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <span>⚠️ <strong>Warning:</strong> {unreadChangesEvents.length} "Live" pipeline item(s) have been modified. Review changes to ensure protocol compliance.</span>
+                    </div>
+                    <button onClick={() => openHistoryModal(unreadChangesEvents[0])}>
+                        View Details
+                    </button>
+                </div>
+            )}
 
             {/* Kanban Hub */}
             <div className="p-8 border rounded-[3rem] transition-all shadow-2xl overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
@@ -84,7 +116,7 @@ export default function Pipeline() {
                 </div>
 
                 <KanbanBoard
-                    events={events}
+                    events={events} // Note: events here are actually deals fetched by useEvents
                     updateEventStage={updateEventStage}
                     deleteEvent={deleteEvent}
                     onEditEvent={handleEditOpen}
@@ -99,6 +131,40 @@ export default function Pipeline() {
                 initialData={selectedEvent}
                 onSubmit={handleSubmit}
             />
+
+            {/* History Modal */}
+            {showHistoryModal && selectedHistoryEvent && (
+                <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
+                    <div className="history-modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2 style={{ color: '#0f172a' }}>Change Audit Log: {selectedHistoryEvent.title || 'Untitled'}</h2>
+                            <button className="modal-close" onClick={() => setShowHistoryModal(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="history-list" style={{ color: '#334155' }}>
+                            {(!selectedHistoryEvent.changeLog || selectedHistoryEvent.changeLog.length === 0) ? (
+                                <p style={{ textAlign: 'center', color: '#64748b' }}>No changes recorded.</p>
+                            ) : (
+                                [...selectedHistoryEvent.changeLog].reverse().map((log, idx) => (
+                                    <div key={idx} className="history-item">
+                                        <div className="history-meta">{new Date(log.timestamp).toLocaleString()}</div>
+                                        {log.changes.map((change, cIdx) => (
+                                            <div key={cIdx} className="change-detail">
+                                                <span className="change-field">{change.field}</span>
+                                                <span className="change-arrow">→</span>
+                                                <span className="old-value">{String(change.oldValue)}</span>
+                                                <span style={{ margin: '0 5px', color: '#94a3b8' }}>to</span>
+                                                <span className="new-value">{String(change.newValue)}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

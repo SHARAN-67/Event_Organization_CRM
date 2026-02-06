@@ -4,13 +4,13 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
     // Modes: 'light', 'dark', 'night'
-    const [theme, setTheme] = useState(localStorage.getItem('antigravity-theme') || 'dark');
+    const [theme, setTheme] = useState(localStorage.getItem('system-theme') || 'dark');
 
     useEffect(() => {
         const root = window.document.documentElement;
         root.classList.remove('theme-light', 'theme-dark', 'theme-night');
         root.classList.add(`theme-${theme}`);
-        localStorage.setItem('antigravity-theme', theme);
+        localStorage.setItem('system-theme', theme);
 
         // Apply background color to body for seamless transitions
         if (theme === 'light') {

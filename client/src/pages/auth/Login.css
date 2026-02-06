@@ -1,0 +1,286 @@
+.login-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    background-color: white;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow: hidden;
+}
+
+.branding-panel {
+    flex: 1.2;
+    position: relative;
+    background: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+    color: white;
+}
+
+@media (max-width: 1024px) {
+    .branding-panel {
+        display: none;
+    }
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.8) 100%);
+    z-index: 1;
+}
+
+.branding-content {
+    position: relative;
+    z-index: 2;
+}
+
+.logo-icon-container {
+    margin-bottom: 32px;
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.branding-title {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -1.5px;
+}
+
+.branding-subtitle {
+    font-size: 20px;
+    opacity: 0.9;
+    margin-bottom: 48px;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #3b82f6;
+    box-shadow: 0 0 10px #3b82f6;
+}
+
+.footer-branding {
+    position: absolute;
+    bottom: 40px;
+    left: 80px;
+    font-size: 14px;
+    opacity: 0.6;
+    z-index: 2;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.form-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: white;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 440px;
+}
+
+.form-header {
+    margin-bottom: 40px;
+}
+
+.form-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.form-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.error-banner {
+    background-color: #fef2f2;
+    color: #dc2626;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    border: 1px solid #fee2e2;
+}
+
+.input-group {
+    margin-bottom: 24px;
+}
+
+.field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 10px;
+}
+
+/* Note: Input components usually have their own styles, but here we cover the wrapper positioning */
+.input-wrapper-relative {
+    position: relative;
+}
+
+.field-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    z-index: 10;
+}
+
+.custom-input {
+    width: 100%;
+    padding: 14px 16px 14px 48px !important;
+    border-radius: 12px;
+    border: 2px solid #f1f5f9;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    color: #0f172a;
+}
+
+.custom-input-password {
+    padding-right: 48px !important;
+}
+
+.custom-input:focus {
+    border-color: #3b82f6;
+    /* Assuming focus style based on general blue theme */
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.forgot-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.eye-button {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* StartLine: 6, EndLine: 6 in JS used top:50% + translateY */
+    border: none;
+    background: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.checkbox-scan {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: #64748b;
+    cursor: pointer;
+    user-select: none;
+}
+
+.login-button {
+    width: 100%;
+    padding: 18px;
+    border-radius: 14px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+}
+
+.login-button:hover {
+    background-color: #2563eb;
+    /* Darker blue on hover */
+    transform: translateY(-1px);
+}
+
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.alternate-links {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.contact-link {
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 4px;
+}

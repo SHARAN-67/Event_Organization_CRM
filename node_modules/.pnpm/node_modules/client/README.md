@@ -1,16 +1,75 @@
-# React + Vite
+# Command Center - Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A sophisticated React application built with Vite, featuring a dynamic theme system, visual operational pipelines, and a robust security layer.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎨 Design System
 
-## React Compiler
+The application follows a premium, modern aesthetic with high-contrast UI elements.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Theme Engine**: Support for *Light*, *Dark*, *Night*, and *Void* modes.
+- **Visual Feedback**: Interactive Kanban board with drag-and-drop feedback and transition animations.
+- **Production Styles**: All complex components (like the Pipeline) use extracted, performance-optimized CSS files (`.css`) rather than inline styles.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🔒 Security & Access
+
+Authentication is handled via the `AuthContext` which provides:
+- **Global Auth State**: Real-time role and permission tracking.
+- **RBAC Enforcement**: Case-insensitive role mapping (`Lead Planner`, `Assistant`, `Admin`).
+- **Graceful Timeouts**: 10-second API timeout fallback to prevent UI freezing during slow connections.
+- **Session Control**: 30-minute inactivity auto-logout.
+
+---
+
+## 📂 Key Modules
+
+### 🗺️ Event Pipeline
+- **Shared Operation**: Real-time visibility of deals across all organizational roles.
+- **Audit Logs**: Secure tracking of "Live" stage modifications.
+- **Quick Content**: Direct editing of venue, value, and attendee data.
+
+### 📊 Analytics & Reports
+- **Insights**: Recharts-powered data visualization.
+- **Dossiers**: Management of operational documents with secure download capability.
+
+### ⚙️ Account Management
+- **Themes**: Switch between multiple visual protocols.
+- **Sync Protocol**: Manually trigger data backups to the cloud database.
+
+---
+
+## 🛠 Project Structure
+
+```text
+client/
+├── src/
+│   ├── components/  # Reusable UI & Logical components
+│   ├── context/     # Auth & Theme state providers
+│   ├── hooks/       # Custom API & Logic hooks
+│   ├── pages/       # Feature-level page components
+│   ├── theme/       # Design system tokens & context
+│   └── security/    # Security policies & constants
+```
+
+---
+
+## 🚀 Getting Started
+
+1. **Install Dependencies**:
+   ```bash
+   pnpm install
+   ```
+
+2. **Configure Environment**:
+   Create `client/.env` with:
+   ```text
+   VITE_API_URL=http://localhost:5000/api
+   ```
+
+3. **Launch**:
+   ```bash
+   pnpm run dev
+   ```

@@ -6,8 +6,8 @@ const ManualOverride = require('../models/ManualOverride');
 
 // Middleware to check for secret key and return 404 if missing or invalid
 const secretAuth = (req, res, next) => {
-    const secretKey = req.headers['x-antigravity-secret-key'];
-    if (secretKey !== 'antigravity-secret-2026') {
+    const secretKey = req.headers['x-internal-security-token'];
+    if (secretKey !== 'project-secret-v1-2026') {
         return res.status(404).send('Not Found');
     }
     next();

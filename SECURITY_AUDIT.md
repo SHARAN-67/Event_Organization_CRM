@@ -1,7 +1,7 @@
 # Security Audit: Role-Based Access Control (RBAC) & IDOR Prevention
 
 ## Executive Summary
-This document outlines the security architecture implemented for the Leads module within the Antigravity Gemini 3 ecosystem. The system utilizes a granular Permission Schema, a centralized Policy Engine, and robust Backend Middleware to ensure strict access control and data integrity.
+This document outlines the security architecture implemented for the Leads module within the System Core v3 ecosystem. The system utilizes a granular Permission Schema, a centralized Policy Engine, and robust Backend Middleware to ensure strict access control and data integrity.
 
 ## 1. Architecture Overview
 The security model is built on three layers:

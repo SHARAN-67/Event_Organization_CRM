@@ -203,7 +203,7 @@ const Reports = () => {
                     </h1>
                     <div className="flex items-center gap-2 mt-2">
                         <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-500 text-[10px] font-black rounded border border-indigo-500/20 uppercase tracking-widest">Operational Analytics</span>
-                        <p className="text-xs font-bold opacity-40 uppercase tracking-tight">Real-time Data Stream: ACTIVE</p>
+                        <p className="text-xs font-bold opacity-70 uppercase tracking-tight">Real-time Data Stream: ACTIVE</p>
                     </div>
                 </div>
 
@@ -243,7 +243,7 @@ const Reports = () => {
                             <div className={`p-3 rounded-xl bg-${stat.color}-500/10 text-${stat.color}-500`}>
                                 {stat.icon}
                             </div>
-                            <span className="text-[10px] font-black opacity-20 uppercase tracking-widest">{stat.label}</span>
+                            <span className="text-[10px] font-black opacity-70 uppercase tracking-widest">{stat.label}</span>
                         </div>
                         <div className="text-3xl font-black tracking-tight">{stat.value}</div>
                     </div>
@@ -255,7 +255,7 @@ const Reports = () => {
                 {/* Filters & Navigation */}
                 <div className="lg:col-span-3 space-y-4">
                     <div className="p-6 rounded-[2.5rem] border sticky top-8" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                        <h3 className="text-xs font-black uppercase tracking-widest opacity-40 mb-6 px-2">Category Filter</h3>
+                        <h3 className="text-xs font-black uppercase tracking-widest opacity-80 mb-6 px-2">Category Filter</h3>
                         <div className="space-y-2">
                             {['All', 'Financial', 'Operational', 'Satisfaction', 'Growth', 'Security'].map(cat => (
                                 <button
@@ -310,13 +310,13 @@ const Reports = () => {
                                     </div>
 
                                     <h3 className="text-2xl font-black tracking-tighter mb-2 leading-none" style={{ color: textColor }}>{report.reportTitle}</h3>
-                                    <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mb-8">{report.period} • {report.category}</p>
+                                    <p className="text-[10px] font-black opacity-60 uppercase tracking-[0.2em] mb-8">{report.period} • {report.category}</p>
 
                                     {/* Metrics Horizontal Grid */}
                                     <div className="grid grid-cols-2 gap-4 mb-8">
                                         {report.metrics?.slice(0, 2).map((m, idx) => (
                                             <div key={idx} className="p-4 bg-slate-500/5 rounded-2xl border" style={{ borderColor: borderColor }}>
-                                                <div className="text-[8px] font-black uppercase opacity-30 mb-1">{m.label}</div>
+                                                <div className="text-[8px] font-black uppercase opacity-60 mb-1">{m.label}</div>
                                                 <div className="flex items-center justify-between">
                                                     <div className="text-lg font-black">{m.value}</div>
                                                     {m.trend === 'up' ? <ArrowUpRight size={14} className="text-emerald-500" /> :
@@ -330,7 +330,7 @@ const Reports = () => {
                                     <div className="flex items-center justify-between pt-6 border-t" style={{ borderColor: borderColor }}>
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500" />
-                                            <span className="text-[10px] font-bold opacity-40 uppercase">{report.generatedBy}</span>
+                                            <span className="text-[10px] font-bold opacity-70 uppercase">{report.generatedBy}</span>
                                         </div>
                                         <div className="flex gap-4">
                                             {report.fileName && (
@@ -371,7 +371,7 @@ const Reports = () => {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-black uppercase tracking-widest opacity-40">Report Title</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest opacity-70">Report Title</Label>
                                     <Input
                                         className="rounded-2xl py-6"
                                         value={formData.reportTitle}
@@ -380,7 +380,7 @@ const Reports = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-black uppercase tracking-widest opacity-40">Operational Period</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest opacity-70">Operational Period</Label>
                                     <Input
                                         className="rounded-2xl py-6"
                                         placeholder="e.g. Q1 2024"
@@ -393,7 +393,7 @@ const Reports = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-black uppercase tracking-widest opacity-40">Classification</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest opacity-70">Classification</Label>
                                     <select
                                         className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
                                         style={{ borderColor: borderColor }}
@@ -408,7 +408,7 @@ const Reports = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-black uppercase tracking-widest opacity-40">Current Status</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest opacity-70">Current Status</Label>
                                     <select
                                         className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
                                         style={{ borderColor: borderColor }}
@@ -425,7 +425,7 @@ const Reports = () => {
 
                             {/* File Upload Section */}
                             <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest opacity-40">Attachment (PDF/DOCX/IMG)</Label>
+                                <Label className="text-xs font-black uppercase tracking-widest opacity-70">Attachment (PDF/DOCX/IMG)</Label>
                                 <div
                                     className="relative border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center transition-all hover:border-indigo-500/50 group"
                                     style={{ borderColor: borderColor, backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)' }}
@@ -445,7 +445,7 @@ const Reports = () => {
                             {/* Metrics Section */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <Label className="text-xs font-black uppercase tracking-widest opacity-40">Core Metrics</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest opacity-70">Core Metrics</Label>
                                     <button type="button" onClick={addMetric} className="text-[10px] font-black text-indigo-500 flex items-center gap-1 uppercase hover:opacity-70">
                                         <Plus size={14} /> Add Counter
                                     </button>
@@ -482,7 +482,7 @@ const Reports = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest opacity-40">Internal Documentation</Label>
+                                <Label className="text-xs font-black uppercase tracking-widest opacity-70">Internal Documentation</Label>
                                 <textarea
                                     className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none min-h-[100px]"
                                     style={{ borderColor: borderColor }}

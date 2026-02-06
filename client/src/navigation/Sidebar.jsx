@@ -23,7 +23,13 @@ import {
   NotepadText,
   ListTodo,
   LogOut,
-  Lock
+  Lock,
+  GalleryThumbnailsIcon,
+  GalleryVertical,
+  LucideGalleryThumbnails,
+  GalleryHorizontalEndIcon,
+  GalleryVerticalEnd,
+  GalleryVerticalEndIcon
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -93,6 +99,12 @@ const Sidebar = () => {
           path: '/my-requests',
         },
         {
+          label: 'Venue Gallery',
+          icon: <GalleryVerticalEndIcon size={20} />,
+          id: 'venue-gallery',
+          path: '/venue-gallery',
+        },
+        {
           label: 'Sales',
           icon: <FolderCheck size={20} />,
           id: 'sales',
@@ -158,7 +170,7 @@ const Sidebar = () => {
     <aside className="sidebar">
       {/* Header */}
       <div className="logo-section">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="brand-container">
           <div className="logo-icon"></div>
           <h2 className="brand-name">CN</h2>
         </div>
@@ -238,9 +250,9 @@ const Sidebar = () => {
                             className={`sub-item ${location.pathname === sub.path ? 'active' : ''}`}
                             onClick={() => canRead && sub.path && handleNavigation(sub.path, sub.isExternal)}
                           >
-                            <span className="sub-icon" style={{ opacity: 0.7 }}>{sub.icon}</span>
+                            <span className="sub-icon">{sub.icon}</span>
                             <span className="sub-text">{sub.label}</span>
-                            {!canRead && <Lock size={12} style={{ marginLeft: 'auto', color: '#ef4444' }} />}
+                            {!canRead && <Lock size={12} className="lock-icon" />}
                           </div>
                         );
                       })}

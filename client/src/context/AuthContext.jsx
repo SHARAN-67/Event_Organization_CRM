@@ -19,8 +19,10 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false);
                 return;
             }
-            const res = await axios.get('http://localhost:5000/api/auth/access-rules', {
-                headers: { Authorization: `Bearer ${token}` }
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const res = await axios.get(`${API_URL}/auth/access-rules`, {
+                headers: { Authorization: `Bearer ${token}` },
+                timeout: 10000 // 10 second timeout to prevent infinite loading
             });
             setPermissions(res.data);
             console.log('[RBAC] Loaded', res.data.length, 'access rules');
@@ -94,7 +96,8 @@ export const AuthProvider = ({ children }) => {
         }
 
         // Map user role to the correct key in the rule
-        const roleKey = userRole === 'Lead Planner' ? 'leadPlanner' : 'assistant';
+        const normalizedRole = userRole ? userRole.toLowerCase() : '';
+        const roleKey = normalizedRole === 'lead planner' ? 'leadPlanner' : 'assistant';
 
         // Check if the role has the required action permission
         const rolePermissions = rule[roleKey] || [];

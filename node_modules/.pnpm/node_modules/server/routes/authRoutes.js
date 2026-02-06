@@ -159,6 +159,17 @@ router.put('/users/:id', authMiddleware(['Admin']), async (req, res) => {
     }
 });
 
+// Get own profile
+router.get('/profile', authMiddleware(), async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Update own profile
 router.put('/profile', authMiddleware(), async (req, res) => {
     try {

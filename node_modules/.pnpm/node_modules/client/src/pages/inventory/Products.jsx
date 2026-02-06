@@ -98,7 +98,7 @@ const Products = () => {
                         </div>
                         <h1 style={{ fontSize: '48px', fontWeight: '900', color: textColor, letterSpacing: '-0.02em', lineHeight: '1', textTransform: 'uppercase' }}>Event Resources</h1>
                         <p style={{ color: subTextColor, fontSize: '18px', fontWeight: '500', marginTop: '16px', maxWidth: '600px', lineHeight: '1.6' }}>
-                            Centralized intelligence for Antigravity assets and rental clusters. Optimized for real-time operational status tracking.
+                            Centralized intelligence for core system assets and rental clusters. Optimized for real-time operational status tracking.
                         </p>
                     </div>
 

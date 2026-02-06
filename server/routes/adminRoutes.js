@@ -98,4 +98,24 @@ router.post('/users/:id/reset-password', authMiddleware(['Admin']), async (req, 
     }
 });
 
+// Sync Database (Local -> Cloud)
+router.post('/sync-db', authMiddleware(['Admin']), async (req, res) => {
+    try {
+        const { syncLocalToCloud } = require('../services/SyncService');
+
+        // Manual sync usually implies syncing everything, but we can respect query param if needed
+        // For now, full sync:
+        const results = await syncLocalToCloud({ excludeActivities: false });
+
+        res.json({
+            message: 'Database Synchronization Complete',
+            details: results
+        });
+
+    } catch (err) {
+        console.error("Sync Fatal Error:", err);
+        res.status(500).json({ error: 'Synchronization failed: ' + err.message });
+    }
+});
+
 module.exports = router;
