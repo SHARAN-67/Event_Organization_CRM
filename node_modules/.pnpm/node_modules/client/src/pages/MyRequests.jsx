@@ -57,7 +57,7 @@ const MyRequests = () => {
 
         switch (status) {
             case 'New':
-                return <span className={`${baseClasses} bg-indigo-500/10 text-indigo-500 border-indigo-500/20`}>Pending Acceptance</span>;
+                return <span className={`${baseClasses} bg-emerald-500/10 text-emerald-500 border-emerald-500/20`}>Pending Acceptance</span>;
             case 'Accepted':
             case 'Approved':
                 return <span className={`${baseClasses} bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]`}>Accepted</span>;
@@ -165,7 +165,7 @@ const MyRequests = () => {
                                             {item.status === 'New' && (
                                                 <button
                                                     onClick={() => handleAcceptMission(item._id || item.id)}
-                                                    className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+                                                    className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-sm hover:shadow-md flex items-center gap-2"
                                                 >
                                                     <CheckCircle2 size={16} /> Accept Mission
                                                 </button>

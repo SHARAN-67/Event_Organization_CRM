@@ -9,13 +9,16 @@
 
 /* Stage Column */
 .kanban-column {
-    min-width: 300px;
+    min-width: 320px;
     flex: 1;
-    background-color: #f8fafc;
-    border-radius: 16px;
-    padding: 16px;
+    border-radius: 2rem;
+    padding: 24px;
     display: flex;
     flex-direction: column;
+    height: fit-content;
+    min-height: 500px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
 }
 
 .kanban-column-header {
@@ -54,13 +57,11 @@
 
 /* Card */
 .kanban-card {
-    background-color: white;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f1f5f9;
+    padding: 24px;
+    border-radius: 1.5rem;
     position: relative;
-    transition: all 0.2s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
 }
 
 .kanban-card.clickable {
@@ -72,8 +73,9 @@
 }
 
 .kanban-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.05);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: rgba(16, 185, 129, 0.2) !important;
 }
 
 .kanban-card:active.draggable {
@@ -127,13 +129,11 @@
     position: absolute;
     top: 100%;
     right: 0;
-    z-index: 10;
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    min-width: 120px;
+    min-width: 160px;
 }
 
 .kanban-menu-item {
@@ -205,9 +205,9 @@
     gap: 6px;
 }
 
-/* Stage Colors */
+/* Stage Colors - Updated for Emerald Theme */
 .kanban-column-header.prospecting {
-    border-bottom-color: #3b82f6;
+    border-bottom-color: #3b82f6 !important;
 }
 
 .kanban-column-title.prospecting {
@@ -215,7 +215,7 @@
 }
 
 .kanban-column-header.processing {
-    border-bottom-color: #f59e0b;
+    border-bottom-color: #f59e0b !important;
 }
 
 .kanban-column-title.processing {
@@ -223,19 +223,19 @@
 }
 
 .kanban-column-header.live {
-    border-bottom-color: #f0e809;
+    border-bottom-color: #fbbf24 !important;
 }
 
 .kanban-column-title.live {
-    color: #f0e809;
+    color: #fbbf24;
 }
 
 .kanban-column-header.completed {
-    border-bottom-color: #22e714;
+    border-bottom-color: #10b981 !important;
 }
 
 .kanban-column-title.completed {
-    color: #22e714;
+    color: #10b981;
 }
 
 /* Empty State */
@@ -248,6 +248,7 @@
 
 /* Drag Over State */
 .kanban-column.drag-over {
-    background-color: #f1f5f9;
-    border: 2px dashed #3b82f6;
+    background-color: rgba(16, 185, 129, 0.05) !important;
+    border: 2px dashed #10b981 !important;
+    transform: scale(1.02);
 }

@@ -39,9 +39,9 @@ router.put('/:id', authMiddleware(), checkPermission('Pipeline', 'Write'), async
 
         const updates = req.body;
 
-        // Change Tracking Logic: If deal is Live, track changes
-        // Assuming 'Live' is the critical stage name
-        if (deal.stage === 'Live' || updates.stage === 'Live') {
+        // Change Tracking Logic: If deal is Live or Processing, track changes
+        const auditedStages = ['Live', 'Processing'];
+        if (auditedStages.includes(deal.stage) || auditedStages.includes(updates.stage)) {
             const changes = [];
             const trackedFields = ['title', 'value', 'stage', 'date', 'attendees', 'venue'];
 
@@ -72,6 +72,26 @@ router.put('/:id', authMiddleware(), checkPermission('Pipeline', 'Write'), async
 
         Object.keys(req.body).forEach(key => {
             deal[key] = req.body[key];
+        });
+
+        const updatedDeal = await deal.save();
+        res.json(updatedDeal);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Acknowledge changes (Dismiss warnings for current user)
+router.patch('/:id/acknowledge', authMiddleware(), async (req, res) => {
+    try {
+        const deal = await Deal.findById(req.params.id);
+        if (!deal) return res.status(404).json({ message: 'Deal not found' });
+
+        // Add current user ID to acknowledgedBy array of each changeLog entry if not already present
+        deal.changeLog.forEach(log => {
+            if (!log.acknowledgedBy.some(id => id.toString() === req.user.id)) {
+                log.acknowledgedBy.push(req.user.id);
+            }
         });
 
         const updatedDeal = await deal.save();

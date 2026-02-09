@@ -45,6 +45,7 @@ const Reports = () => {
     const cardBg = theme === 'light' ? '#ffffff' : theme === 'dark' ? 'rgba(30, 41, 59, 0.5)' : 'rgba(15, 23, 42, 0.5)';
     const bgColor = theme === 'light' ? '#f8fafc' : theme === 'dark' ? '#0f172a' : '#020617';
     const borderColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#e2e8f0';
+    const accentColor = isDark ? '#10b981' : '#059669';
 
     const canWrite = hasPermission('Reports', 'Write');
     const canDelete = hasPermission('Reports', 'Delete');
@@ -198,22 +199,22 @@ const Reports = () => {
             <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter flex items-center gap-3" style={{ color: textColor }}>
-                        <div className="w-2 h-10 bg-indigo-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.3)]" />
+                        <div className="w-2 h-10 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
                         COMMAND INTELLIGENCE
                     </h1>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-500 text-[10px] font-black rounded border border-indigo-500/20 uppercase tracking-widest">Operational Analytics</span>
+                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded border border-emerald-500/20 uppercase tracking-widest">Operational Analytics</span>
                         <p className="text-xs font-bold opacity-70 uppercase tracking-tight">Real-time Data Stream: ACTIVE</p>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-500 transition-colors group-hover:text-indigo-400" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500 transition-colors group-hover:text-emerald-400" />
                         <input
                             type="text"
                             placeholder="Scan Reports..."
-                            className="pl-11 pr-6 py-3 rounded-2xl border text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all w-64"
+                            className="pl-11 pr-6 py-3 rounded-2xl border text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all w-64"
                             style={{ backgroundColor: cardBg, borderColor: borderColor, color: textColor }}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -222,7 +223,7 @@ const Reports = () => {
                     {canWrite && (
                         <button
                             onClick={() => handleOpenModal()}
-                            className="flex items-center gap-2 bg-indigo-600 text-white font-bold px-6 py-3 rounded-2xl text-[11px] uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20"
+                            className="flex items-center gap-2 bg-emerald-600 text-white font-bold px-6 py-3 rounded-2xl text-[11px] uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-500/20"
                         >
                             <Plus size={16} strokeWidth={3} /> Initialize Report
                         </button>
@@ -262,8 +263,8 @@ const Reports = () => {
                                     key={cat}
                                     onClick={() => setFilterCategory(cat)}
                                     className={`w-full flex items-center justify-between px-5 py-3 rounded-2xl text-xs font-black transition-all ${filterCategory === cat
-                                        ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
-                                        : 'hover:bg-indigo-500/5 text-subTextColor'
+                                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                                        : 'hover:bg-emerald-500/5 text-subTextColor'
                                         }`}
                                     style={{ color: filterCategory === cat ? 'white' : subTextColor }}
                                 >
@@ -304,7 +305,7 @@ const Reports = () => {
                                             {report.status}
                                         </div>
                                         <div className="flex gap-2">
-                                            {canWrite && <button onClick={() => handleOpenModal(report)} className="p-2 hover:bg-indigo-500/10 rounded-lg transition-colors text-indigo-500"><Edit size={16} /></button>}
+                                            {canWrite && <button onClick={() => handleOpenModal(report)} className="p-2 hover:bg-emerald-500/10 rounded-lg transition-colors text-emerald-500"><Edit size={16} /></button>}
                                             {canDelete && <button onClick={() => handleDelete(report._id)} className="p-2 hover:bg-rose-500/10 rounded-lg transition-colors text-rose-500"><Trash2 size={16} /></button>}
                                         </div>
                                     </div>
@@ -329,7 +330,7 @@ const Reports = () => {
 
                                     <div className="flex items-center justify-between pt-6 border-t" style={{ borderColor: borderColor }}>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500" />
+                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500" />
                                             <span className="text-[10px] font-bold opacity-70 uppercase">{report.generatedBy}</span>
                                         </div>
                                         <div className="flex gap-4">
@@ -341,7 +342,7 @@ const Reports = () => {
                                                     <Download size={14} /> Dossier
                                                 </button>
                                             )}
-                                            <button className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:gap-3 flex items-center gap-2 transition-all">
+                                            <button className="text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:gap-3 flex items-center gap-2 transition-all">
                                                 Analytics <ChevronRight size={14} />
                                             </button>
                                         </div>
@@ -355,8 +356,9 @@ const Reports = () => {
 
             {/* Modal for Initialize/Update Report */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-xl animate-in fade-in duration-300">
-                    <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[3rem] p-12 border shadow-2xl relative animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] custom-scrollbar" style={{ borderColor: borderColor }}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xl animate-in fade-in duration-300">
+                    <div className="w-full max-w-2xl rounded-[3rem] p-12 border shadow-2xl relative animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] custom-scrollbar"
+                        style={{ backgroundColor: cardBg, borderColor: borderColor, color: textColor }}>
                         <button
                             onClick={() => setShowModal(false)}
                             className="absolute right-10 top-10 p-3 hover:bg-slate-500/10 rounded-2xl transition-all"
@@ -364,7 +366,7 @@ const Reports = () => {
                             <X size={24} />
                         </button>
 
-                        <h2 className="text-3xl font-black mb-8 tracking-tighter">
+                        <h2 className="text-3xl font-black mb-8 tracking-tighter" style={{ color: accentColor }}>
                             {editingReport ? 'UPDATE INTELLIGENCE' : 'INITIALIZE REPORT'}
                         </h2>
 
@@ -395,7 +397,7 @@ const Reports = () => {
                                 <div className="space-y-2">
                                     <Label className="text-xs font-black uppercase tracking-widest opacity-70">Classification</Label>
                                     <select
-                                        className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                                        className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
                                         style={{ borderColor: borderColor }}
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -410,7 +412,7 @@ const Reports = () => {
                                 <div className="space-y-2">
                                     <Label className="text-xs font-black uppercase tracking-widest opacity-70">Current Status</Label>
                                     <select
-                                        className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                                        className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
                                         style={{ borderColor: borderColor }}
                                         value={formData.status}
                                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
@@ -435,7 +437,7 @@ const Reports = () => {
                                         className="absolute inset-0 opacity-0 cursor-pointer z-10"
                                         onChange={(e) => setSelectedFile(e.target.files[0])}
                                     />
-                                    <FileUp size={32} className="text-indigo-500 mb-2 opacity-50 group-hover:scale-110 transition-transform" />
+                                    <FileUp size={32} className="text-emerald-500 mb-2 opacity-50 group-hover:scale-110 transition-transform" />
                                     <p className="text-xs font-bold opacity-40">
                                         {selectedFile ? selectedFile.name : 'Click or Drag to secure dossier'}
                                     </p>
@@ -446,7 +448,7 @@ const Reports = () => {
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <Label className="text-xs font-black uppercase tracking-widest opacity-70">Core Metrics</Label>
-                                    <button type="button" onClick={addMetric} className="text-[10px] font-black text-indigo-500 flex items-center gap-1 uppercase hover:opacity-70">
+                                    <button type="button" onClick={addMetric} className="text-[10px] font-black text-emerald-500 flex items-center gap-1 uppercase hover:opacity-70">
                                         <Plus size={14} /> Add Counter
                                     </button>
                                 </div>
@@ -484,7 +486,7 @@ const Reports = () => {
                             <div className="space-y-2">
                                 <Label className="text-xs font-black uppercase tracking-widest opacity-70">Internal Documentation</Label>
                                 <textarea
-                                    className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none min-h-[100px]"
+                                    className="w-full px-4 py-4 rounded-2xl border bg-transparent text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none min-h-[100px]"
                                     style={{ borderColor: borderColor }}
                                     placeholder="Enter detailed analysis notes..."
                                     value={formData.notes}
@@ -492,7 +494,7 @@ const Reports = () => {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full py-8 text-sm font-black uppercase tracking-[0.2em] rounded-3xl mt-6 bg-indigo-600 hover:bg-indigo-500 shadow-2xl shadow-indigo-500/20 transition-all">
+                            <Button type="submit" className="w-full py-8 text-sm font-black uppercase tracking-[0.2em] rounded-3xl mt-6 bg-emerald-600 hover:bg-emerald-500 shadow-2xl shadow-emerald-500/20 transition-all">
                                 {editingReport ? 'COMMIT UPDATED DATA' : 'FINALIZE INITIALIZATION'}
                             </Button>
                         </form>

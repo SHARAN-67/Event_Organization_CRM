@@ -24,6 +24,8 @@ export function Input({
         boxSizing: 'border-box',
     };
 
+    const accentColor = '#10b981';
+
     return (
         <input
             type={type}
@@ -33,9 +35,9 @@ export function Input({
                 ...style,
             }}
             onFocus={(e) => {
-                e.target.style.borderColor = '#3b82f6';
+                e.target.style.borderColor = accentColor;
                 e.target.style.backgroundColor = isDark ? '#1e293b' : '#ffffff';
-                e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
+                e.target.style.boxShadow = `0 0 0 4px ${accentColor}1a`;
                 if (props.onFocus) props.onFocus(e);
             }}
             onBlur={(e) => {

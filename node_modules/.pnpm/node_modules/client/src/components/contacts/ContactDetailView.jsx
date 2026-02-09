@@ -19,8 +19,8 @@ const ContactDetailView = ({ contactId, isOpen, onClose, onRefresh }) => {
     const textSecondary = isDark ? '#94a3b8' : '#64748b';
     const inputBg = isDark ? '#0f172a' : '#f8fafc';
     const inputBorder = isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0';
-    const buttonBg = isDark ? '#3b82f6' : '#18181b';
-    const buttonHover = isDark ? '#2563eb' : '#27272a';
+    const buttonBg = isDark ? '#10b981' : '#059669';
+    const buttonHover = isDark ? '#059669' : '#047857';
 
     const [formData, setFormData] = useState({
         name: '',
@@ -135,7 +135,7 @@ const ContactDetailView = ({ contactId, isOpen, onClose, onRefresh }) => {
                         <div className="flex-1 overflow-y-auto p-10 space-y-8">
                             {loading ? (
                                 <div className="flex items-center justify-center h-full">
-                                    <Loader2 className="animate-spin text-blue-500" size={48} />
+                                    <Loader2 className="animate-spin text-emerald-500" size={48} />
                                 </div>
                             ) : (
                                 <form onSubmit={handleSave} className="space-y-6">

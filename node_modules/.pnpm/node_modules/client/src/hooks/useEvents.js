@@ -108,6 +108,20 @@ export const useEvents = () => {
         }
     };
 
+    const acknowledgeChanges = async (id) => {
+        try {
+            setError(null);
+            const response = await axios.patch(`${API_BASE_URL}/deals/${id}/acknowledge`, {}, getAuthConfig());
+            setEvents(prev => prev.map(event => event._id === id ? response.data : event));
+            return response.data;
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || err.message || 'Failed to acknowledge changes';
+            setError(errorMessage);
+            console.error('Error acknowledging changes:', err);
+            throw err;
+        }
+    };
+
     return {
         events,
         loading,
@@ -116,6 +130,7 @@ export const useEvents = () => {
         createEvent,
         updateEvent,
         updateEventStage,
-        deleteEvent
+        deleteEvent,
+        acknowledgeChanges
     };
 };

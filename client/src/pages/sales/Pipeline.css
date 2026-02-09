@@ -1,15 +1,15 @@
 /* Warning Banner */
 .warning-banner {
-    background-color: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeeba;
-    padding: 12px 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+    padding: 12px 24px;
+    margin-bottom: 24px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
 }
 
 .warning-banner button {
@@ -25,6 +25,42 @@
 
 .warning-banner button:hover {
     background-color: #e0a800;
+}
+
+.warning-banner .seen-button {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.warning-banner .seen-button:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+}
+
+.warning-banner .view-details-button {
+    background-color: #f59e0b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.warning-banner .view-details-button:hover {
+    background-color: #d97706;
+    transform: translateY(-1px);
 }
 
 /* History Modal */
@@ -59,7 +95,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: #3b82f6;
+    background-color: #10b981;
 }
 
 .history-meta {

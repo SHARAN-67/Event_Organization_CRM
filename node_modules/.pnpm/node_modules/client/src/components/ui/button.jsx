@@ -22,11 +22,14 @@ const Button = ({ children, onClick, className, variant = "primary", ...props })
         ...props.style
     };
 
+    const accentColor = "#10b981";
+    const accentHover = "#059669";
+
     const variants = {
         primary: {
-            backgroundColor: "#3b82f6",
+            backgroundColor: accentColor,
             color: "white",
-            boxShadow: "0 4px 6px -1px rgba(59, 130, 246, 0.2), 0 2px 4px -1px rgba(59, 130, 246, 0.1)",
+            boxShadow: `0 4px 6px -1px ${accentColor}33, 0 2px 4px -1px ${accentColor}1a`,
         },
         secondary: {
             backgroundColor: isDark ? "#1e293b" : "#f1f5f9",
@@ -50,7 +53,7 @@ const Button = ({ children, onClick, className, variant = "primary", ...props })
     };
 
     const hoverColors = {
-        primary: "#2563eb",
+        primary: accentHover,
         secondary: isDark ? "#0f172a" : "#e2e8f0",
         outline: isDark ? "rgba(255, 255, 255, 0.05)" : "#f8fafc",
         ghost: isDark ? "rgba(255, 255, 255, 0.05)" : "#f1f5f9",

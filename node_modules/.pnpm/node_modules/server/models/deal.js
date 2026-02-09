@@ -35,6 +35,7 @@ const dealSchema = new mongoose.Schema({
     changeLog: [{
         timestamp: { type: Date, default: Date.now },
         modifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        acknowledgedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         changes: [{
             field: String,
             oldValue: mongoose.Schema.Types.Mixed,

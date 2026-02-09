@@ -11,8 +11,8 @@ import './Pipeline.css';
 export default function Pipeline() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const { events, fetchEvents, createEvent, updateEvent, updateEventStage, deleteEvent } = useEvents();
-    const { hasPermission } = useAuth();
+    const { events, fetchEvents, createEvent, updateEvent, updateEventStage, deleteEvent, acknowledgeChanges } = useEvents();
+    const { userId, hasPermission } = useAuth();
     const { theme } = useTheme();
 
     // History Modal State
@@ -26,10 +26,15 @@ export default function Pipeline() {
         fetchEvents();
     }, [fetchEvents]);
 
-    // Calculate events with unread changes (Live status and has changeLog)
+    // Calculate events with unread changes (Live/Processing status and has unacknowledged changeLog)
     const unreadChangesEvents = useMemo(() => {
-        return events.filter(ev => ev.stage === 'Live' && ev.changeLog && ev.changeLog.length > 0);
-    }, [events]);
+        const auditedStages = ['Live', 'Processing'];
+        return events.filter(ev => {
+            if (!auditedStages.includes(ev.stage) || !ev.changeLog || ev.changeLog.length === 0) return false;
+            // Check if there's any log NOT acknowledged by the current user
+            return ev.changeLog.some(log => !log.acknowledgedBy || !log.acknowledgedBy.includes(userId));
+        });
+    }, [events, userId]);
 
     const openHistoryModal = (event) => {
         setSelectedHistoryEvent(event);
@@ -67,11 +72,11 @@ export default function Pipeline() {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 text-left">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter flex items-center gap-3" style={{ color: textColor }}>
-                        <div className="w-2 h-10 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
+                        <div className="w-2 h-10 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
                         EVENT PIPELINE
                     </h1>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="px-2 py-0.5 bg-amber-500/10 text-amber-500 text-[10px] font-black rounded border border-amber-500/20 uppercase tracking-widest">Stage Control</span>
+                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded border border-emerald-500/20 uppercase tracking-widest">Stage Control</span>
                         <p className="text-xs font-bold opacity-40 uppercase tracking-tight">Synchronization Status: Active</p>
                     </div>
                 </div>
@@ -80,7 +85,7 @@ export default function Pipeline() {
                     {canWrite && (
                         <button
                             onClick={handleCreateOpen}
-                            className="bg-amber-500 text-slate-950 font-black px-8 py-3 rounded-2xl flex items-center gap-3 text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-amber-500/20"
+                            className="bg-emerald-500 text-slate-950 font-black px-8 py-3 rounded-2xl flex items-center gap-3 text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/20"
                         >
                             <Plus size={16} /> New Fragment
                         </button>
@@ -100,18 +105,26 @@ export default function Pipeline() {
             {unreadChangesEvents.length > 0 && (
                 <div className="warning-banner" style={{ margin: '0 32px' }}>
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <span>⚠️ <strong>Warning:</strong> {unreadChangesEvents.length} "Live" pipeline item(s) have been modified. Review changes to ensure protocol compliance.</span>
+                        <span>⚠️ <strong>Security Audit Required:</strong> {unreadChangesEvents.length} active pipeline item(s) (Live/Processing) have been modified. Review changes to ensure protocol compliance.</span>
                     </div>
-                    <button onClick={() => openHistoryModal(unreadChangesEvents[0])}>
-                        View Details
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => acknowledgeChanges(unreadChangesEvents[0]._id)}
+                            className="seen-button"
+                        >
+                            Mark as Seen
+                        </button>
+                        <button className="view-details-button" onClick={() => openHistoryModal(unreadChangesEvents[0])}>
+                            View Details
+                        </button>
+                    </div>
                 </div>
             )}
 
             {/* Kanban Hub */}
             <div className="p-8 border rounded-[3rem] transition-all shadow-2xl overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
                 <div className="flex items-center gap-4 mb-10 text-left">
-                    <Kanban size={20} className="text-amber-500" />
+                    <Kanban size={20} className="text-emerald-500" />
                     <h2 className="text-sm font-black uppercase tracking-[0.2em] opacity-50">Operation Grid Matrix</h2>
                 </div>
 
@@ -120,6 +133,7 @@ export default function Pipeline() {
                     updateEventStage={updateEventStage}
                     deleteEvent={deleteEvent}
                     onEditEvent={handleEditOpen}
+                    acknowledgeChanges={acknowledgeChanges}
                     canWrite={canWrite}
                     canDelete={canDelete}
                 />
@@ -135,14 +149,14 @@ export default function Pipeline() {
             {/* History Modal */}
             {showHistoryModal && selectedHistoryEvent && (
                 <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
-                    <div className="history-modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2 style={{ color: '#0f172a' }}>Change Audit Log: {selectedHistoryEvent.title || 'Untitled'}</h2>
+                    <div className="history-modal-content" onClick={e => e.stopPropagation()} style={{ backgroundColor: theme === 'light' ? '#ffffff' : '#1e293b', border: `1px solid ${borderColor}` }}>
+                        <div className="modal-header" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                            <h2 style={{ color: textColor }}>Change Audit Log: {selectedHistoryEvent.title || 'Untitled'}</h2>
                             <button className="modal-close" onClick={() => setShowHistoryModal(false)}>
-                                <X size={20} />
+                                <X size={20} style={{ color: subTextColor }} />
                             </button>
                         </div>
-                        <div className="history-list" style={{ color: '#334155' }}>
+                        <div className="history-list" style={{ color: textColor }}>
                             {(!selectedHistoryEvent.changeLog || selectedHistoryEvent.changeLog.length === 0) ? (
                                 <p style={{ textAlign: 'center', color: '#64748b' }}>No changes recorded.</p>
                             ) : (

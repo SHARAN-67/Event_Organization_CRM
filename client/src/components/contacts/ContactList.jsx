@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ContactDetailView from "./ContactDetailView.jsx";
 import { useContacts } from "@/hooks/useContacts";
+import { useTheme } from "../../theme/ThemeContext";
 
 const typeConfig = {
-  attendee: { label: "Attendee", color: "#3b82f6" },
+  attendee: { label: "Attendee", color: "#06b6d4" }, // Cyan
   vendor: { label: "Vendor", color: "#f59e0b" },
   speaker: { label: "Speaker", color: "#10b981" },
   sponsor: { label: "Sponsor", color: "#8b5cf6" },
@@ -17,9 +18,17 @@ const typeConfig = {
 
 const ContactList = ({ canWrite = true, canDelete = true }) => {
   const { contacts, loading, isConnected, refreshContacts } = useContacts();
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContactId, setSelectedContactId] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  const isDark = theme === 'dark' || theme === 'night';
+  const cardBg = theme === 'light' ? '#ffffff' : theme === 'dark' ? 'rgba(30, 41, 59, 0.5)' : 'rgba(15, 23, 42, 0.5)';
+  const textColor = isDark ? '#f1f5f9' : '#1e293b';
+  const subTextColor = isDark ? '#94a3b8' : '#64748b';
+  const borderColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
+  const iconBg = isDark ? 'rgba(255, 255, 255, 0.03)' : '#f8fafc';
 
   const filteredContacts = contacts.filter(
     (contact) =>
@@ -41,7 +50,7 @@ const ContactList = ({ canWrite = true, canDelete = true }) => {
   if (loading && contacts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-pulse">
-        <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
+        <Loader2 size={48} className="text-emerald-500 animate-spin mb-4" />
         <p className="text-slate-600 font-black uppercase text-[10px] tracking-widest">Synchronizing Intelligence...</p>
       </div>
     );
@@ -64,23 +73,32 @@ const ContactList = ({ canWrite = true, canDelete = true }) => {
       {/* Search & Actions */}
       <div className="flex flex-wrap gap-4 items-center justify-between">
         <div className="relative w-full max-w-md group">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" />
           <Input
             placeholder="Search Contact Intelligence..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 bg-white border-slate-100 rounded-2xl h-14 shadow-sm focus:ring-4 focus:ring-blue-500/5 transition-all text-slate-800 font-medium"
+            className="pl-12 rounded-2xl h-14 shadow-sm focus:ring-4 focus:ring-emerald-500/5 transition-all font-medium"
+            style={{
+              backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : '#ffffff',
+              borderColor: borderColor,
+              color: textColor
+            }}
           />
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" className="h-14 px-6 rounded-2xl border-slate-100 bg-white text-slate-600 font-bold uppercase text-[11px] tracking-widest hover:bg-slate-50 transition-all">
+          <Button
+            variant="outline"
+            className="h-14 px-6 rounded-2xl font-bold uppercase text-[11px] tracking-widest transition-all"
+            style={{ backgroundColor: cardBg, borderColor: borderColor, color: subTextColor }}
+          >
             <Filter size={16} /> Filters
           </Button>
           {canWrite && (
             <Button
               onClick={handleCreateNew}
-              className="h-14 px-8 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black uppercase text-[11px] tracking-widest shadow-xl shadow-blue-200 transition-all"
+              className="h-14 px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase text-[11px] tracking-widest shadow-xl shadow-emerald-500/20 transition-all font-['Inter']"
             >
               Initialize New Profile
             </Button>
@@ -94,22 +112,23 @@ const ContactList = ({ canWrite = true, canDelete = true }) => {
           <div
             key={contact.id || contact._id}
             onClick={() => handleRowClick(contact.id || contact._id)}
-            className="group relative bg-white p-6 rounded-[2.5rem] border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+            className="group relative p-6 rounded-[2.5rem] border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+            style={{ backgroundColor: cardBg, borderColor: borderColor }}
           >
             {/* Backdrop Glow */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/5 blur-[50px] group-hover:bg-blue-500/10 transition-all rounded-full" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/5 blur-[50px] group-hover:bg-emerald-500/10 transition-all rounded-full" />
 
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16 rounded-2xl shadow-lg shadow-slate-100">
-                  <AvatarFallback className="bg-slate-50 text-slate-600 font-black text-xl">
+                <Avatar className="h-16 w-16 rounded-2xl shadow-lg" style={{ boxShadow: isDark ? '0 10px 15px -3px rgba(0,0,0,0.3)' : '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+                  <AvatarFallback className="font-black text-xl" style={{ backgroundColor: iconBg, color: textColor }}>
                     {contact.name?.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="text-lg font-black text-slate-800 group-hover:text-blue-600 transition-colors truncate max-w-[150px]">{contact.name}</h3>
-                  <div className="flex items-center gap-2 text-slate-600 font-bold uppercase text-[10px] tracking-wider mt-1">
-                    <Building size={12} /> {contact.company || 'Private Entity'}
+                  <h3 className="text-lg font-black group-hover:text-emerald-500 transition-colors truncate max-w-[150px]" style={{ color: textColor }}>{contact.name}</h3>
+                  <div className="flex items-center gap-2 font-bold uppercase text-[10px] tracking-wider mt-1" style={{ color: subTextColor }}>
+                    <Building size={12} className="text-emerald-500" /> {contact.company || 'Private Entity'}
                   </div>
                 </div>
               </div>
@@ -124,22 +143,22 @@ const ContactList = ({ canWrite = true, canDelete = true }) => {
               </Badge>
             </div>
 
-            <div className="space-y-3 pt-6 border-t border-slate-50">
-              <div className="flex items-center gap-3 text-slate-600 text-sm font-medium">
-                <div className="bg-slate-50 p-2 rounded-lg"><Mail size={14} className="text-slate-500" /></div>
+            <div className="space-y-3 pt-6 border-t" style={{ borderColor: borderColor }}>
+              <div className="flex items-center gap-3 text-sm font-medium" style={{ color: textColor }}>
+                <div className="p-2 rounded-lg" style={{ backgroundColor: iconBg }}><Mail size={14} style={{ color: subTextColor }} /></div>
                 <span className="truncate">{contact.email}</span>
               </div>
-              <div className="flex items-center gap-3 text-slate-600 text-sm font-medium">
-                <div className="bg-slate-50 p-2 rounded-lg"><Phone size={14} className="text-slate-500" /></div>
+              <div className="flex items-center gap-3 text-sm font-medium" style={{ color: textColor }}>
+                <div className="p-2 rounded-lg" style={{ backgroundColor: iconBg }}><Phone size={14} style={{ color: subTextColor }} /></div>
                 <span>{contact.phone_number || 'No Intel'}</span>
               </div>
             </div>
 
             <div className="mt-6 flex items-center justify-between">
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              <div className="text-[10px] font-black uppercase tracking-widest" style={{ color: subTextColor }}>
                 Last Seen: {new Date(contact.createdAt || Date.now()).toLocaleDateString()}
               </div>
-              <div className="bg-blue-50 text-blue-500 p-2 rounded-xl opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all">
+              <div className="p-2 rounded-xl opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all" style={{ backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : '#ecfdf5', color: '#10b981' }}>
                 <ChevronRight size={16} />
               </div>
             </div>

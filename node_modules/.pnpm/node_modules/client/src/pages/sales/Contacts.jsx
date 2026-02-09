@@ -33,13 +33,13 @@ const Contacts = () => {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-8 text-left">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20">
+              <div className="bg-emerald-600 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
                 <Globe size={20} className="text-white" />
               </div>
-              <span className="text-blue-500 font-black text-[10px] uppercase tracking-[0.3em]">Directory Intelligence Node</span>
+              <span className="text-emerald-500 font-black text-[10px] uppercase tracking-[0.3em]">Directory Intelligence Node</span>
             </div>
             <h1 className="text-5xl lg:text-7xl font-black tracking-tighter leading-none uppercase" style={{ color: textColor }}>
-              GLOBAL <br /><span className="text-blue-500">DIRECTORY</span>
+              GLOBAL <br /><span className="text-emerald-500">DIRECTORY</span>
             </h1>
             <p className="text-lg font-bold opacity-40 mt-6 max-w-lg leading-relaxed uppercase tracking-tight">
               A centralized repository for attendees, vendors, and sponsors. Synchronized with core biometric protocols.
